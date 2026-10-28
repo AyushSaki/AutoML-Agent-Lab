@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}AutoML Agent Lab — Your AI Data Science Workspace{% endblock %}
+{% block content %}
+<section class="landing-hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="status-dot"></span> AUTONOMOUS MACHINE LEARNING WORKSPACE</div>
+      <h1>From raw data to <span class="gradient-text">ML insights.</span></h1>
+      <p class="hero-lead">Explore datasets, uncover data-quality issues, train machine-learning models, compare results, and keep your experiments organized — all in one workspace.</p>
+      <div class="d-flex flex-wrap gap-3 mt-4">
+        <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Launch your workspace <span aria-hidden="true">→</span></a>
+        <a class="btn btn-outline-light btn-lg" href="#features">Explore features</a>
+      </div>
+      <div class="hero-trust"><span>✓ CSV & Excel</span><span>✓ Classification & regression</span><span>✓ Local-first workflow</span></div>
+    </div>
+    <div class="hero-preview">
+      <div class="preview-window">
+        <div class="preview-top"><div class="window-dots"><i></i><i></i><i></i></div><span>DATA INTELLIGENCE / OVERVIEW</span><span class="live-tag">READY</span></div>
+        <div class="preview-body">
+          <div class="preview-heading">Dataset overview <span>↗</span></div>
+          <div class="preview-metrics">
+            <div><small>Rows</small><strong>12,480</strong><em>Records detected</em></div>
+            <div><small>Features</small><strong>18</strong><em>Columns profiled</em></div>
+          </div>
+          <div class="chart-label">Illustrative model score</div>
+          <div class="chart-bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:47%"></i><i style="height:73%"></i><i style="height:62%"></i><i style="height:91%"></i><i style="height:80%"></i><i style="height:98%"></i><i style="height:71%"></i><i style="height:88%"></i><i style="height:100%"></i><i style="height:84%"></i></div>
+          <div class="preview-footer"><span><b class="green-dot"></b> Data profile complete</span><span>Demo visualization</span></div>
+        </div>
+      </div>
+      <div class="floating-note"><span class="note-icon">✦</span><div><strong>One workflow</strong><small>Profile · Train · Compare · Predict</small></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block" id="features">
+  <div class="container">
+    <div class="section-kicker">THE TOOLKIT</div>
+    <h2 class="section-title">A complete workflow for your data</h2>
+    <p class="section-subtitle">Move from understanding a dataset to evaluating models without juggling disconnected scripts.</p>
+    <div class="row g-4 mt-2">
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon blue">◫</div><h3>Data Intelligence</h3><p>Inspect column types, missing values, duplicate rows, summary statistics, distributions, and correlations.</p><span class="feature-tag">DATA QUALITY + EDA</span></article></div>
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon purple">⌘</div><h3>Automated ML</h3><p>Prepare features, identify supported task types, train candidate models, and compare evaluation metrics.</p><span class="feature-tag">CLASSIFICATION + REGRESSION</span></article></div>
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon teal">◉</div><h3>Experiment Tracking</h3><p>Review saved experiment history and open reports to understand past training runs.</p><span class="feature-tag">REPRODUCIBLE WORKFLOW</span></article></div>
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon orange">✳</div><h3>Dataset Lab</h3><p>Run dataset analysis, inspect results, and download reports where supported.</p><span class="feature-tag">REPORTING</span></article></div>
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon pink">⇄</div><h3>Compare & Discover</h3><p>Compare datasets and explore the available dataset-discovery workflow.</p><span class="feature-tag">DATASET EXPLORATION</span></article></div>
+      <div class="col-md-6 col-lg-4"><article class="feature-card"><div class="feature-icon blue">✧</div><h3>Local AI Assistant</h3><p>Ask questions about supported analysis workflows using a configured local Ollama model.</p><span class="feature-tag">OPTIONAL LOCAL LLM</span></article></div>
+    </div>
+  </div>
+</section>
+
+<section class="workflow-section">
+  <div class="container">
+    <div class="section-kicker">HOW IT WORKS</div>
+    <h2 class="section-title">Your first experiment in four steps</h2>
+    <div class="row g-3 mt-3">
+      <div class="col-md-6 col-lg-3"><div class="step-card"><span>01</span><h3>Upload</h3><p>Start with a CSV or Excel dataset.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="step-card"><span>02</span><h3>Understand</h3><p>Review data quality and dataset summaries.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="step-card"><span>03</span><h3>Train & evaluate</h3><p>Select a target and evaluate supported models.</p></div></div>
+      <div class="col-md-6 col-lg-3"><div class="step-card"><span>04</span><h3>Use the results</h3><p>Review reports, save models, and make supported predictions.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="container">
+    <div class="cta-panel">
+      <div><div class="section-kicker">READY TO BEGIN?</div><h2>Make your next dataset useful.</h2><p>Create a local account and open your machine-learning workspace.</p></div>
+      <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Create account →</a>
+    </div>
+    <p class="small text-secondary mt-3">Supported file types: CSV, XLSX and XLS. Results depend on data quality, target selection, and the algorithms available in the project. AI assistance requires a working Ollama setup.</p>
+  </div>
+</section>
+{% endblock %}

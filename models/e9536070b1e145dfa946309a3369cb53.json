@@ -1,0 +1,13 @@
+{
+  "model_id": "e9536070b1e145dfa946309a3369cb53",
+  "model": "Linear Regression",
+  "dataset": "regression_smoke_test.csv",
+  "target": "price",
+  "task": "regression",
+  "features": [
+    "area",
+    "bedrooms",
+    "age"
+  ],
+  "classes": null
+}

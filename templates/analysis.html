@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Intelligence | AutoML Agent Lab</title>
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --blue: #2563eb;
+            --green: #15803d;
+            --orange: #c2410c;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 20px 5%;
+        }
+
+        header h1 { margin: 0; font-size: 24px; }
+        header p { margin: 7px 0 0; color: var(--muted); }
+
+        main {
+            max-width: 1400px;
+            margin: 28px auto;
+            padding: 0 22px 40px;
+        }
+
+        h2 { font-size: 19px; margin: 0 0 16px; }
+        h3 { font-size: 15px; margin-top: 0; }
+
+        .section { margin-bottom: 28px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            min-width: 0;
+            box-shadow: 0 2px 7px rgba(15, 23, 42, .025);
+        }
+
+        .metric-label { color: var(--muted); font-size: 13px; }
+        .metric-value { font-size: 28px; font-weight: 700; margin-top: 9px; }
+        .muted { color: var(--muted); font-size: 13px; }
+        .danger { color: #b91c1c; }
+        .success { color: var(--green); }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 13px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 11px 13px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        th { background: #f8fafc; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 16px;
+        }
+
+        .chart { width: 100%; min-height: 300px; }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        select, button {
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        select { background: white; min-width: 190px; }
+        button {
+            background: var(--blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover { background: #1d4ed8; }
+        .full-width { grid-column: 1 / -1; }
+        .pill {
+            display: inline-block;
+            padding: 4px 9px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 3px;
+        }
+
+        @media (max-width: 600px) {
+            main { padding: 0 12px 28px; }
+            .chart-grid { grid-template-columns: 1fr; }
+            header { padding: 18px 16px; }
+        }
+    
+/* automl-analysis-premium-v2 */
+:root {
+  color-scheme: dark;
+  --bg: #080d18;
+  --card: #111a2b;
+  --text: #edf3ff;
+  --muted: #9aaac3;
+  --border: #263650;
+  --blue: #6795ff;
+  --green: #45d6a0;
+  --orange: #ffb86b;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text) !important;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(59,130,246,.17), transparent 34%),
+    radial-gradient(ellipse at 95% 20%, rgba(124,58,237,.10), transparent 30%),
+    var(--bg) !important;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  line-height: 1.65;
+}
+header {
+  background: rgba(12, 20, 36, .92) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 24px clamp(20px, 5vw, 76px) !important;
+  position: relative;
+}
+header h1 {
+  color: #f4f7ff !important;
+  font-size: clamp(25px, 3vw, 36px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -.04em;
+}
+header p {
+  color: var(--muted) !important;
+  margin-top: 8px !important;
+}
+main {
+  max-width: 1500px !important;
+  padding: 28px clamp(14px, 3vw, 40px) 64px !important;
+  margin: 0 auto !important;
+}
+h2, h3, h4, h5 {
+  color: #f0f5ff !important;
+  font-weight: 750 !important;
+  letter-spacing: -.025em;
+}
+h2 { font-size: 21px !important; }
+h3 { font-size: 16px !important; }
+p, label, small, .muted {
+  color: var(--muted);
+}
+.section {
+  margin-bottom: 25px !important;
+}
+.grid {
+  gap: 17px !important;
+}
+.card, .section > .card, .metric-card, .panel,
+[class*="card"] {
+  background: linear-gradient(145deg, rgba(20,31,51,.98), rgba(14,23,40,.98)) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 17px !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,.15) !important;
+}
+.card {
+  padding: 21px !important;
+  transition: border-color .18s ease, transform .18s ease;
+}
+.card:hover {
+  border-color: #3c5882 !important;
+}
+.metric-card, .stat-card, .summary-card {
+  padding: 20px !important;
+}
+.metric-card strong, .card strong {
+  color: #f3f7ff;
+}
+button, .btn, input[type="submit"] {
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  transition: filter .15s ease, transform .15s ease;
+}
+button:hover, .btn:hover, input[type="submit"]:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+.btn-primary, button[type="submit"], input[type="submit"] {
+  background: linear-gradient(135deg, #3478f6, #7258e9) !important;
+  color: white !important;
+  border: 0 !important;
+  padding: 11px 18px !important;
+}
+.btn-secondary, .btn-outline-secondary {
+  color: #dce8fb !important;
+  background: #1b2940 !important;
+  border: 1px solid #3a4e6e !important;
+}
+input:not([type="checkbox"]):not([type="radio"]),
+select, textarea, .form-control {
+  width: 100%;
+  background: #0a1323 !important;
+  color: #eef4ff !important;
+  border: 1px solid #334561 !important;
+  border-radius: 10px !important;
+  padding: 11px 13px !important;
+}
+input[type="file"] {
+  border: 1px dashed #5777a7 !important;
+  background: rgba(59,130,246,.07) !important;
+  padding: 14px !important;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #6b9cff !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.15) !important;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e5edfb !important;
+}
+th {
+  background: #1a2941 !important;
+  color: #bcd0ee !important;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+th, td {
+  padding: 12px 14px !important;
+  border-color: var(--border) !important;
+}
+tr:hover td {
+  background: rgba(59,130,246,.055);
+}
+pre, code {
+  color: #b9d6ff !important;
+}
+pre {
+  background: #080f1c !important;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-x: auto;
+}
+hr { border-color: var(--border) !important; }
+a { color: #83adff; }
+a:hover { color: #b2cbff; }
+.alert {
+  border-radius: 12px !important;
+}
+.plotly-graph-div {
+  max-width: 100%;
+  border-radius: 12px;
+}
+.js-plotly-plot .plotly .main-svg {
+  border-radius: 12px;
+}
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: #0a1120; }
+::-webkit-scrollbar-thumb {
+  background: #354765;
+  border-radius: 20px;
+}
+@media (max-width: 700px) {
+  header { padding: 20px !important; }
+  main { padding: 18px 12px 40px !important; }
+  .grid { grid-template-columns: 1fr !important; }
+  .card { padding: 15px !important; }
+}
+
+</style>
+
+<!-- ANALYSIS LIGHT OVERRIDE START -->
+<style id="analysis-light-final">
+html, body {
+    background: #f3f6fb !important;
+    color: #17243a !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Arial, sans-serif !important;
+}
+body > header {
+    background: #ffffff !important;
+    color: #17243a !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(20,40,70,.035) !important;
+}
+body > header h1, body > header h2, body > header h3,
+body > header p, main h1, main h2, main h3, main h4,
+main h5, main strong, main label {
+    color: #17243a !important;
+}
+main {
+    background: transparent !important;
+    max-width: 1480px !important;
+    margin: 0 auto !important;
+    padding: 30px 28px 60px !important;
+}
+main .card, main .metric-card, main .panel,
+main section, main [class*="card"] {
+    background: #ffffff !important;
+    color: #26364e !important;
+    border: 1px solid #e1e8f1 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 3px 12px rgba(25,45,80,.04) !important;
+}
+main p, main small, main .muted, main .text-muted {
+    color: #65758b !important;
+}
+main .btn-primary, main button[type="submit"],
+main input[type="submit"] {
+    background: #315fe8 !important;
+    color: #ffffff !important;
+    border: 1px solid #315fe8 !important;
+    border-radius: 9px !important;
+}
+main input:not([type="checkbox"]):not([type="radio"]),
+main select, main textarea, main .form-control {
+    background: #ffffff !important;
+    color: #26364e !important;
+    border: 1px solid #d5deeb !important;
+    border-radius: 8px !important;
+}
+main table {
+    background: #ffffff !important;
+    color: #34445b !important;
+}
+main th {
+    background: #f2f5fa !important;
+    color: #52647d !important;
+}
+main td {
+    color: #34445b !important;
+    border-color: #e5ebf3 !important;
+}
+main pre {
+    background: #f5f7fb !important;
+    color: #26364e !important;
+    border: 1px solid #e1e8f1 !important;
+}
+main a { color: #315fe8; }
+main hr { border-color: #e1e8f1 !important; }
+@media (max-width: 700px) {
+    main { padding: 18px 12px 40px !important; }
+}
+</style>
+<!-- ANALYSIS LIGHT OVERRIDE END -->
+
+</head>
+<body>
+<header>
+    <h1>AutoML Agent Lab</h1>
+    <p>Data Intelligence Engine · Dataset profiling and exploratory analysis</p>
+</header>
+
+<main>
+    <section class="section">
+        <div class="card">
+            <h2>Dataset Overview</h2>
+            <p><strong>File:</strong> {{ filename | default('Uploaded dataset') }}</p>
+            <p class="muted">Review data quality and patterns before training a machine-learning model.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="grid">
+            <div class="card">
+                <div class="metric-label">Rows</div>
+                <div class="metric-value">{{ profile.rows | default(0) }}</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Columns</div>
+                <div class="metric-value">{{ profile.columns | default(0) }}</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Missing Values</div>
+                <div class="metric-value {{ 'danger' if profile.total_missing|default(0) > 0 else 'success' }}">
+                    {{ profile.total_missing | default(0) }}
+                </div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Duplicate Rows</div>
+                <div class="metric-value">{{ profile.duplicate_rows | default(0) }}</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Numeric Columns</div>
+                <div class="metric-value">{{ profile.numeric_columns | default([]) | length }}</div>
+            </div>
+            <div class="card">
+                <div class="metric-label">Categorical Columns</div>
+                <div class="metric-value">{{ profile.categorical_columns | default([]) | length }}</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Data Types</h2>
+            {% if profile.dtypes %}
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Column</th><th>Data Type</th></tr></thead>
+                    <tbody>
+                    {% for column, dtype in profile.dtypes.items() %}
+                        <tr><td>{{ column }}</td><td>{{ dtype }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="muted">No data-type information available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Missing Values by Column</h2>
+            {% if profile.missing_by_column %}
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Column</th><th>Missing Count</th></tr></thead>
+                    <tbody>
+                    {% for column, count in profile.missing_by_column.items() %}
+                        <tr>
+                            <td>{{ column }}</td>
+                            <td class="{{ 'danger' if count|int > 0 else 'success' }}">{{ count }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="success">No missing values were reported.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Statistical Summary</h2>
+            {% if profile.statistics %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Statistic</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for column, stats in profile.statistics.items() %}
+                        {% if stats is mapping %}
+                            {% for stat_name, value in stats.items() %}
+                            <tr>
+                                <td>{{ column }}</td>
+                                <td>{{ stat_name }}</td>
+                                <td>{{ value }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td>{{ column }}</td><td>Summary</td><td>{{ stats }}</td></tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="muted">No statistical summary available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Outlier Summary (IQR)</h2>
+            {% if profile.outlier_summary %}
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Column</th><th>Outlier Information</th></tr></thead>
+                    <tbody>
+                    {% for column, info in profile.outlier_summary.items() %}
+                        <tr>
+                            <td>{{ column }}</td>
+                            <td>
+                                {% if info is mapping %}
+                                    {% for key, value in info.items() %}
+                                        <strong>{{ key }}:</strong> {{ value }}{% if not loop.last %} · {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {{ info }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="muted">No outlier information available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Categorical Distributions</h2>
+            {% if profile.categorical_distributions %}
+            <div class="grid">
+                {% for column, distribution in profile.categorical_distributions.items() %}
+                <div class="card">
+                    <h3>{{ column }}</h3>
+                    {% if distribution is mapping %}
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Value</th><th>Count</th></tr></thead>
+                            <tbody>
+                            {% for value, count in distribution.items() %}
+                                <tr><td>{{ value }}</td><td>{{ count }}</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <p>{{ distribution }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="muted">No categorical distributions available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Interactive Exploratory Data Analysis</h2>
+            <p class="muted">Charts are interactive: hover to inspect values, zoom, and use the Plotly toolbar.</p>
+            {% if profile.charts %}
+            <div class="chart-grid">
+                {% for chart_name, chart in profile.charts.items() %}
+                <div class="card">
+                    <h3>{{ chart_name | replace('_', ' ') | title }}</h3>
+                    <div class="chart" id="chart-{{ loop.index }}"></div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="muted">No charts were generated for this dataset.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Dataset Preview</h2>
+            {% if profile.preview and profile.column_names %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>{% for column in profile.column_names %}<th>{{ column }}</th>{% endfor %}</tr>
+                    </thead>
+                    <tbody>
+                    {% for row in profile.preview %}
+                        <tr>
+                        {% for column in profile.column_names %}
+                            <td>{{ row[column] if row is mapping else '' }}</td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="muted">No preview available.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card">
+            <h2>Train and Compare Models</h2>
+            <p class="muted">Choose a target column if you want supervised classification or regression.</p>
+            <form action="{{ url_for('train') }}" method="post">
+                <input type="hidden" name="file_path" value="{{ profile.file_path | default(file_path | default('')) }}">
+                <div class="actions">
+                    <label for="target">Target column:</label>
+                    <select name="target" id="target">
+                        <option value="" {% if not profile.suggested_target %}selected{% endif %}>
+                            Automatic / Unspecified
+                        </option>
+                        {% for column in profile.column_names | default([]) %}
+                            <option
+                                value="{{ column }}"
+                                {% if column == profile.suggested_target %}selected{% endif %}
+                            >{{ column }}{% if column == profile.suggested_target %} (AI suggested){% endif %}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="task">Task:</label>
+                    <select name="task" id="task">
+                        <option value="auto">Auto Detect</option>
+                        <option value="classification">Classification</option>
+                        <option value="regression">Regression</option>
+                    </select>
+
+                    <button type="submit">Train Models</button>
+                </div>
+            </form>
+            <p class="muted">Training results depend on the dataset, selected target, and supported algorithms.</p>
+        </div>
+    </section>
+
+    <div class="actions">
+        <a href="{{ url_for('index') }}">← Upload another dataset</a>
+    </div>
+</main>
+
+<script>
+    const charts = [
+        {% for chart_name, chart in profile.charts.items() %}
+        {
+            id: "chart-{{ loop.index }}",
+            data: {{ chart.get('data', []) | tojson }},
+            layout: {{ chart.get('layout', {}) | tojson }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    if (window.Plotly) {
+        charts.forEach(function(chart) {
+            Plotly.newPlot(
+                chart.id,
+                chart.data,
+                chart.layout,
+                { responsive: true, displaylogo: false }
+            );
+        });
+    }
+</script>
+</body>
+</html>

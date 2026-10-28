@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Model Results | AutoML-Agent-Lab{% endblock %}
+
+{% block content %}
+{% set evaluation = result.get('evaluation', {}) %}
+{% set best = result.get('best_model', {}) %}
+{% set warnings = result.get('warnings', []) %}
+
+<div class="mb-4">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm mb-3">
+        &larr; New Experiment
+    </a>
+    <h2 class="fw-bold">Model Evaluation Dashboard</h2>
+    {% if result.get('saved_model', {}).get('model_id') %}
+    <div class="mt-3">
+      <a class="btn btn-primary"
+         href="{{ url_for('predict_saved_model', model_id=result.saved_model.model_id) }}">
+        Predict on New Data
+      </a>
+      <small class="d-block text-secondary mt-2">
+        Upload a new CSV or Excel file using this trained model.
+      </small>
+    </div>
+    {% endif %}
+    <p class="text-secondary">
+        {{ result.dataset }} · {{ result.task|title }} ·
+        Target: <strong>{{ result.target }}</strong>
+    </p>
+</div>
+
+{% if warnings %}
+<div class="card border-warning mb-4">
+    <div class="card-body">
+        <h5 class="fw-bold text-warning-emphasis">Dataset Quality Warnings</h5>
+        <ul class="mb-0">
+            {% for warning in warnings %}
+            <li class="mb-1">{{ warning }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Best Model</span>
+            <strong class="fs-4">{{ best.get('model', 'N/A') }}</strong>
+            <small class="text-secondary">Selected using cross-validation</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Usable Rows</span>
+            <strong>{{ result.rows }}</strong>
+            <small class="text-secondary">Rows with a valid target</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Input Features</span>
+            <strong>{{ result.features }}</strong>
+            <small class="text-secondary">Columns used for prediction</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>CV Folds</span>
+            <strong>{{ best.get('cv_folds', 'N/A') }}</strong>
+            <small class="text-secondary">Cross-validation splits</small>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="fw-bold">Model Comparison</h4>
+        <p class="text-secondary">
+            Test-set metrics measure held-out performance.
+            CV metrics summarize performance across training folds.
+        </p>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Model</th>
+                        {% if result.task == 'classification' %}
+                        <th>Test Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>Test F1</th>
+                        <th>ROC AUC</th>
+                        <th>CV Accuracy (mean ± SD)</th>
+                        <th>CV F1 (mean ± SD)</th>
+                        {% else %}
+                        <th>Test MAE</th>
+                        <th>Test RMSE</th>
+                        <th>Test R²</th>
+                        <th>CV MAE (mean ± SD)</th>
+                        <th>CV R² (mean ± SD)</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result.models %}
+                    <tr class="{% if row.model == best.get('model') %}table-success{% endif %}">
+                        <td>
+                            <strong>{{ row.model }}</strong>
+                            {% if row.model == best.get('model') %}
+                            <span class="badge text-bg-success">Best</span>
+                            {% endif %}
+                        </td>
+                        {% if result.task == 'classification' %}
+                        <td>{{ row.get('accuracy', '—') }}</td>
+                        <td>{{ row.get('precision', '—') }}</td>
+                        <td>{{ row.get('recall', '—') }}</td>
+                        <td>{{ row.get('f1', '—') }}</td>
+                        <td>{{ row.get('roc_auc') if row.get('roc_auc') is not none else '—' }}</td>
+                        <td>
+                            {% if row.get('cv_accuracy_mean') is not none %}
+                            {{ row.cv_accuracy_mean }} ± {{ row.cv_accuracy_std }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if row.get('cv_f1_mean') is not none %}
+                            {{ row.cv_f1_mean }} ± {{ row.cv_f1_std }}
+                            {% else %}—{% endif %}
+                        </td>
+                        {% else %}
+                        <td>{{ row.get('mae', '—') }}</td>
+                        <td>{{ row.get('rmse', '—') }}</td>
+                        <td>{{ row.get('r2', '—') }}</td>
+                        <td>
+                            {% if row.get('cv_mae_mean') is not none %}
+                            {{ row.cv_mae_mean }} ± {{ row.cv_mae_std }}
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if row.get('cv_r2_mean') is not none %}
+                            {{ row.cv_r2_mean }} ± {{ row.cv_r2_std }}
+                            {% else %}—{% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <small class="text-secondary">
+            SD means standard deviation across folds. A lower SD suggests more
+            consistent fold results, but does not guarantee future performance.
+        </small>
+    </div>
+</div>
+
+{% if result.task == 'classification' and evaluation.get('confusion_matrix') %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="fw-bold">Confusion Matrix</h4>
+        <p class="text-secondary">
+            Best model predictions on the held-out test set.
+            Rows are actual classes; columns are predicted classes.
+        </p>
+        {% set cm = evaluation.confusion_matrix %}
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Actual \ Predicted</th>
+                        {% for label in cm.labels %}
+                        <th>{{ label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for values in cm.matrix %}
+                    <tr>
+                        <th class="table-light">{{ cm.labels[loop.index0] }}</th>
+                        {% for value in values %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="text-secondary mb-0">
+            Training rows: {{ evaluation.get('train_rows', '—') }} ·
+            Test rows: {{ evaluation.get('test_rows', '—') }}
+        </p>
+    </div>
+</div>
+{% endif %}
+
+{% if result.task == 'classification' and evaluation.get('classification_report') %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="fw-bold">Classification Report</h4>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Class / Average</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1 Score</th>
+                        <th>Support</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for label, values in evaluation.classification_report.items() %}
+                    {% if values is mapping %}
+                    <tr>
+                        <td>{{ label|replace('_', ' ')|title }}</td>
+                        <td>{{ "%.3f"|format(values.get('precision', 0)) }}</td>
+                        <td>{{ "%.3f"|format(values.get('recall', 0)) }}</td>
+                        <td>{{ "%.3f"|format(values.get('f1-score', 0)) }}</td>
+                        <td>{{ values.get('support', 0) }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h4 class="fw-bold">Ask the Local AI</h4>
+        <p class="text-secondary">
+            Ask about the model comparison, evaluation metrics, or dataset warnings.
+            Requires Ollama running locally.
+        </p>
+        <div class="input-group">
+            <input id="question" class="form-control"
+                   placeholder="Why is this model the best?">
+            <button id="askBtn" class="btn btn-outline-primary">Ask AI</button>
+        </div>
+        <div id="answer" class="ai-answer mt-3" aria-live="polite">
+            Your answer will appear here.
+        </div>
+    </div>
+</div>
+
+<script>
+const context = {{ result|tojson }};
+const askButton = document.getElementById("askBtn");
+const questionInput = document.getElementById("question");
+const answerBox = document.getElementById("answer");
+
+async function askLocalAI() {
+    const question = questionInput.value.trim();
+
+    if (!question) {
+        answerBox.textContent = "Please enter a question.";
+        return;
+    }
+
+    askButton.disabled = true;
+    answerBox.textContent = "Thinking with local Ollama...";
+
+    try {
+        const form = new URLSearchParams({
+            question: question,
+            context: JSON.stringify(context)
+        });
+
+        const response = await fetch("{{ url_for('ask') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: form
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.answer || "The AI request failed.");
+        }
+
+        answerBox.textContent = data.answer || "No answer was returned.";
+    } catch (error) {
+        answerBox.textContent = "Could not get an AI answer: " + error.message;
+    } finally {
+        askButton.disabled = false;
+    }
+}
+
+askButton.addEventListener("click", askLocalAI);
+questionInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") askLocalAI();
+});
+</script>
+{% endblock %}

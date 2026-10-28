@@ -1,0 +1,23 @@
+{
+  "model_id": "7d346e7fca044524a01f93259b49eb4f",
+  "model": "XGBoost",
+  "dataset": "610cbaa05cf34039827c15519c32402e_HousingData.csv",
+  "target": "MEDV",
+  "task": "regression",
+  "features": [
+    "CRIM",
+    "ZN",
+    "INDUS",
+    "CHAS",
+    "NOX",
+    "RM",
+    "AGE",
+    "DIS",
+    "RAD",
+    "TAX",
+    "PTRATIO",
+    "B",
+    "LSTAT"
+  ],
+  "classes": null
+}

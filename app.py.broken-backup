@@ -1,0 +1,35 @@
+
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    file = request.files.get("dataset")
+
+    if not file or not file.filename:
+        flash("Please select a CSV or Excel dataset.", "error")
+        return redirect(url_for("index"))
+
+    if not allowed(file.filename):
+        flash("Only CSV, XLSX and XLS files are supported.", "error")
+        return redirect(url_for("index"))
+
+    safe = secure_filename(file.filename)
+    path = UPLOAD_DIR / f"{uuid.uuid4().hex}_{safe}"
+    file.save(path)
+
+    try:
+        profile = analyze_dataset(path)
+
+        # Ensure the training form receives the uploaded file path.
+        profile["file_path"] = str(path)
+
+        return render_template(
+            "analysis.html",
+            profile=profile,
+            filename=safe,
+            file_path=str(path)
+        )
+
+    except Exception as exc:
+        traceback.print_exc()
+        flash(f"Analysis failed: {exc}", "error")
+        return redirect(url_for("index"))
+

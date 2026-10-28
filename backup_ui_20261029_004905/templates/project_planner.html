@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Project Planner | AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="mb-4">
+    <h1>Autonomous Project Planner</h1>
+    <p>Describe the client's problem. Generate a structured project brief before choosing datasets or training models.</p>
+  </div>
+
+  <form method="post" class="card p-4 mb-4">
+    <div class="mb-3">
+      <label class="form-label" for="topic">Project topic</label>
+      <input class="form-control" id="topic" name="topic" required
+             value="{{ form.get('topic', '') }}" placeholder="Example: House price prediction">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="problem">Client's business problem</label>
+      <textarea class="form-control" id="problem" name="problem" rows="3" required
+                placeholder="What problem should the system solve?">{{ form.get('problem', '') }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="users">Intended users</label>
+      <input class="form-control" id="users" name="users"
+             value="{{ form.get('users', '') }}" placeholder="Example: buyers, analysts, internal staff">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="success">Success criteria</label>
+      <textarea class="form-control" id="success" name="success" rows="2"
+                placeholder="Example: MAE below a business-approved threshold">{{ form.get('success', '') }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="constraints">Constraints and requirements</label>
+      <textarea class="form-control" id="constraints" name="constraints" rows="2"
+                placeholder="Example: free tools, local processing, privacy, available hardware">{{ form.get('constraints', '') }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="deployment">Preferred deployment</label>
+      <select class="form-select" id="deployment" name="deployment">
+        {% for option in ['Flask', 'Local notebook', 'REST API', 'Cloud deployment', 'Not decided'] %}
+        <option value="{{ option }}" {% if form.get('deployment', 'Flask') == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="btn btn-primary" type="submit">Analyse Requirements</button>
+  </form>
+
+  {% if brief %}
+  <section class="card p-4 mb-4">
+    <h2>Project Brief</h2>
+    <p><strong>Topic:</strong> {{ brief.topic }}</p>
+    <p><strong>Business problem:</strong> {{ brief.business_problem }}</p>
+    <p><strong>Suggested task:</strong> <code>{{ brief.detected_task }}</code></p>
+    <p><strong>Confidence note:</strong> {{ brief.task_confidence }}</p>
+    <p>{{ brief.recommendation }}</p>
+    <p><strong>Deployment:</strong> {{ brief.deployment }}</p>
+
+    <h3 class="mt-3">Clarify before building</h3>
+    {% if brief.clarifying_questions %}
+    <ul>{% for question in brief.clarifying_questions %}<li>{{ question }}</li>{% endfor %}</ul>
+    {% else %}
+    <p>No basic gaps were detected. Review the brief and confirm the requirements before training.</p>
+    {% endif %}
+
+    <h3 class="mt-3">Implementation roadmap</h3>
+    {% for phase in brief.future_scope %}
+    <div class="border rounded p-3 mb-2">
+      <strong>{{ phase.phase }}. {{ phase.name }}</strong>
+      <div>{{ phase.deliverable }}</div>
+    </div>
+    {% endfor %}
+
+    <h3 class="mt-3">Data and evaluation safeguards</h3>
+    <ul>{% for policy in brief.data_policy %}<li>{{ policy }}</li>{% endfor %}</ul>
+    <p class="text-muted">This first version uses deterministic keyword-based task suggestions. It does not claim to have searched or verified external datasets.</p>
+    <a class="btn btn-outline-primary" href="{{ url_for('project_brief_json', brief_id=brief_id) }}">Download Project Brief JSON</a>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

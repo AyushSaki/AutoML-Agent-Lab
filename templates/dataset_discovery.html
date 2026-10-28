@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dataset Discovery | AutoML-Agent-Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="fw-bold mb-1">
+                Dataset Discovery Engine
+            </h1>
+
+            <p class="text-secondary mb-0">
+                Find, compare and download candidate datasets
+                for your project.
+            </p>
+        </div>
+
+        {% if results %}
+        <span class="badge text-bg-primary fs-6">
+            {{ results|length }} candidates
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <form
+                method="get"
+                action="{{ url_for('dataset_discovery') }}"
+            >
+
+                <label
+                    class="form-label fw-bold"
+                    for="q"
+                >
+                    Project topic / dataset requirement
+                </label>
+
+                <div class="input-group input-group-lg">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="q"
+                        name="q"
+                        value="{{ query }}"
+                        placeholder="Example: house price prediction"
+                        required
+                    >
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Search Datasets
+                    </button>
+
+                </div>
+
+                <div class="form-text">
+                    Try terms such as:
+                    <strong>house price</strong>,
+                    <strong>customer churn</strong>,
+                    <strong>fraud detection</strong>,
+                    <strong>student performance</strong>,
+                    <strong>sales prediction</strong>.
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    {% if error %}
+
+    <div class="alert alert-danger shadow-sm">
+        {{ error }}
+    </div>
+
+    {% endif %}
+
+
+    {% if results %}
+
+    <!-- ACTION BAR -->
+
+    <div class="card border-0 shadow-sm mb-3">
+
+        <div class="card-body">
+
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+
+                <div class="form-check me-3">
+
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="selectAll"
+                    >
+
+                    <label
+                        class="form-check-label fw-bold"
+                        for="selectAll"
+                    >
+                        Select all
+                    </label>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="compareBtn"
+                    disabled
+                >
+                    Compare Selected
+                </button>
+
+                <span
+                    class="text-secondary"
+                    id="selectionCount"
+                >
+                    0 datasets selected
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATASET RESULTS -->
+
+    <div
+        id="datasetResults"
+        class="row g-4"
+    >
+
+    {% for item in results %}
+
+        <div
+            class="col-12 col-lg-6 dataset-card"
+            data-id="{{ item.id }}"
+        >
+
+            <div class="card h-100 border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input dataset-checkbox"
+                                type="checkbox"
+                                value="{{ item.id }}"
+                                id="dataset_{{ item.id }}"
+                                data-name="{{ item.name }}"
+                                data-task="{{ item.task or 'Not specified' }}"
+                                data-rows="{{ item.instances or 'Not specified' }}"
+                                data-features="{{ item.features or 'Not specified' }}"
+                                data-area="{{ item.area or 'Not specified' }}"
+                                data-description="{{ item.description|e }}"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="dataset_{{ item.id }}"
+                            >
+                                <strong>Select</strong>
+                            </label>
+
+                        </div>
+
+                        <span class="badge text-bg-light border">
+                            Match {{ item.relevance_score }}
+                        </span>
+
+                    </div>
+
+
+                    <h3 class="h5 fw-bold mt-3">
+                        {{ item.name }}
+                    </h3>
+
+
+                    <p class="text-secondary">
+                        {{ item.description or
+                           "No repository description was returned." }}
+                    </p>
+
+
+                    <div class="row g-2 mb-3">
+
+                        <div class="col-6">
+
+                            <div class="border rounded p-2 h-100">
+
+                                <small class="text-secondary d-block">
+                                    Task
+                                </small>
+
+                                <strong>
+                                    {{ item.task or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="border rounded p-2 h-100">
+
+                                <small class="text-secondary d-block">
+                                    Area
+                                </small>
+
+                                <strong>
+                                    {{ item.area or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="border rounded p-2 h-100">
+
+                                <small class="text-secondary d-block">
+                                    Rows
+                                </small>
+
+                                <strong>
+                                    {{ item.instances or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-6">
+
+                            <div class="border rounded p-2 h-100">
+
+                                <small class="text-secondary d-block">
+                                    Features
+                                </small>
+
+                                <strong>
+                                    {{ item.features or "Not specified" }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            class="btn btn-sm btn-outline-secondary"
+                            href="{{ item.repository_url }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            Official UCI Page
+                        </a>
+
+
+                        <form
+                            method="post"
+                            action="{{ url_for('dataset_discovery_download') }}"
+                            class="download-form"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="dataset_id"
+                                value="{{ item.id }}"
+                            >
+
+                            <button
+                                class="btn btn-sm btn-primary"
+                                type="submit"
+                            >
+                                Download & Validate
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+
+    <!-- COMPARISON -->
+
+    <div
+        id="comparisonPanel"
+        class="card border-0 shadow-sm mt-5 d-none"
+    >
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <h2 class="h4 fw-bold mb-1">
+                        Dataset Comparison
+                    </h2>
+
+                    <p class="text-secondary mb-0">
+                        Compare candidate datasets before choosing
+                        one for your AutoML project.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="clearComparison"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+
+            <div
+                class="table-responsive mt-4"
+            >
+
+                <table
+                    class="table table-bordered align-middle"
+                    id="comparisonTable"
+                >
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Property</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HELP -->
+
+    <div class="alert alert-info mt-4">
+
+        <strong>Important:</strong>
+        A high relevance score only means that the dataset
+        looks related to your search topic. It does not prove
+        that the dataset satisfies the client's exact
+        requirements.
+
+        The next stage of AutoML-Agent-Lab can evaluate
+        target availability, feature compatibility,
+        missing values, sample size and task suitability.
+
+    </div>
+
+    {% elif searched %}
+
+    <div class="alert alert-warning">
+        No matching datasets were found.
+        Try broader keywords such as
+        <strong>sales</strong>,
+        <strong>customer</strong>,
+        <strong>finance</strong>,
+        <strong>health</strong>,
+        or <strong>classification</strong>.
+    </div>
+
+    {% endif %}
+
+
+    {% if downloaded %}
+
+    <div class="card border-0 shadow-sm mt-5">
+
+        <div class="card-body">
+
+            <h2 class="h4 fw-bold">
+                Dataset Downloaded Successfully
+            </h2>
+
+            <div class="row g-3 mt-1">
+
+                <div class="col-md-6">
+
+                    <strong>Dataset</strong>
+
+                    <div>
+                        {{ downloaded.metadata.get(
+                            'name',
+                            'Unknown'
+                        ) }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <strong>Rows</strong>
+
+                    <div>
+                        {{ downloaded.rows }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <strong>Columns</strong>
+
+                    <div>
+                        {{ downloaded.columns }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <p>
+                <strong>Local dataset:</strong>
+                <code>
+                    {{ downloaded.local_path }}
+                </code>
+            </p>
+
+
+            <p>
+                <strong>Metadata:</strong>
+                <code>
+                    {{ downloaded.metadata_path }}
+                </code>
+            </p>
+
+
+            <p>
+                <strong>SHA-256:</strong>
+                <code>
+                    {{ downloaded.metadata.data_sha256 }}
+                </code>
+            </p>
+
+
+            <div class="alert alert-warning mb-0">
+
+                <strong>Licence:</strong>
+                {{ downloaded.metadata.license_status }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const checkboxes =
+            Array.from(
+                document.querySelectorAll(
+                    ".dataset-checkbox"
+                )
+            );
+
+        const selectAll =
+            document.getElementById(
+                "selectAll"
+            );
+
+        const compareBtn =
+            document.getElementById(
+                "compareBtn"
+            );
+
+        const selectionCount =
+            document.getElementById(
+                "selectionCount"
+            );
+
+        const comparisonPanel =
+            document.getElementById(
+                "comparisonPanel"
+            );
+
+        const comparisonTable =
+            document.getElementById(
+                "comparisonTable"
+            );
+
+        const clearComparison =
+            document.getElementById(
+                "clearComparison"
+            );
+
+
+        function selected() {
+
+            return checkboxes.filter(
+                checkbox => checkbox.checked
+            );
+
+        }
+
+
+        function updateSelection() {
+
+            const items =
+                selected();
+
+            const count =
+                items.length;
+
+            selectionCount.textContent =
+                count +
+                (
+                    count === 1
+                    ? " dataset selected"
+                    : " datasets selected"
+                );
+
+            compareBtn.disabled =
+                count < 2;
+
+            if (count === 0) {
+
+                selectAll.checked = false;
+
+            } else {
+
+                selectAll.checked =
+                    count === checkboxes.length;
+
+            }
+
+        }
+
+
+        function buildComparison() {
+
+            const items =
+                selected();
+
+            if (items.length < 2) {
+
+                comparisonPanel.classList.add(
+                    "d-none"
+                );
+
+                return;
+
+            }
+
+
+            const rows = [
+                ["Dataset", item => item.dataset.name],
+                ["UCI ID", item => item.value],
+                ["Task", item => item.dataset.task],
+                ["Area", item => item.dataset.area],
+                ["Rows", item => item.dataset.rows],
+                ["Features", item => item.dataset.features],
+                ["Description", item => item.dataset.description]
+            ];
+
+
+            const header =
+                comparisonTable.querySelector(
+                    "thead tr"
+                );
+
+            header.innerHTML =
+                "<th>Property</th>";
+
+
+            items.forEach(
+                item => {
+
+                    const th =
+                        document.createElement(
+                            "th"
+                        );
+
+                    th.textContent =
+                        item.dataset.name;
+
+                    header.appendChild(th);
+
+                }
+            );
+
+
+            const tbody =
+                comparisonTable.querySelector(
+                    "tbody"
+                );
+
+            tbody.innerHTML = "";
+
+
+            rows.forEach(
+                ([label, getter]) => {
+
+                    const tr =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    const labelCell =
+                        document.createElement(
+                            "th"
+                        );
+
+                    labelCell.textContent =
+                        label;
+
+                    tr.appendChild(
+                        labelCell
+                    );
+
+
+                    items.forEach(
+                        item => {
+
+                            const td =
+                                document.createElement(
+                                    "td"
+                                );
+
+                            td.textContent =
+                                getter(item);
+
+                            tr.appendChild(
+                                td
+                            );
+
+                        }
+                    );
+
+
+                    tbody.appendChild(tr);
+
+                }
+            );
+
+
+            comparisonPanel.classList.remove(
+                "d-none"
+            );
+
+            comparisonPanel.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+
+        checkboxes.forEach(
+            checkbox => {
+
+                checkbox.addEventListener(
+                    "change",
+                    updateSelection
+                );
+
+            }
+        );
+
+
+        selectAll.addEventListener(
+            "change",
+            function () {
+
+                checkboxes.forEach(
+                    checkbox => {
+
+                        checkbox.checked =
+                            selectAll.checked;
+
+                    }
+                );
+
+                updateSelection();
+
+            }
+        );
+
+
+        compareBtn.addEventListener(
+            "click",
+            buildComparison
+        );
+
+
+        clearComparison.addEventListener(
+            "click",
+            function () {
+
+                comparisonPanel.classList.add(
+                    "d-none"
+                );
+
+                checkboxes.forEach(
+                    checkbox => {
+
+                        checkbox.checked =
+                            false;
+
+                    }
+                );
+
+                updateSelection();
+
+            }
+        );
+
+
+        updateSelection();
+
+    }
+);
+
+</script>
+
+{% endblock %}

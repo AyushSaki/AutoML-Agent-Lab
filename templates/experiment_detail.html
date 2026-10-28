@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+
+{% block title %}Experiment {{ experiment.id }} | AutoML-Agent-Lab{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+
+    <div>
+        <a href="{{ url_for('experiments') }}"
+           class="btn btn-outline-secondary btn-sm mb-3">
+            &larr; Experiment History
+        </a>
+
+        <h2 class="fw-bold mb-1">
+            Experiment #{{ experiment.id }}
+        </h2>
+
+        <p class="text-secondary mb-0">
+            {{ experiment.dataset_name }}
+            · {{ experiment.task|title }}
+            · {{ experiment.algorithm or "Unknown model" }}
+        </p>
+    </div>
+
+    <a class="btn btn-primary"
+       href="{{ url_for('experiment_report', experiment_id=experiment.id) }}">
+        Download Markdown Report
+    </a>
+
+</div>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Task</span>
+            <strong>{{ experiment.task|title }}</strong>
+            <small class="text-secondary">
+                Machine learning problem type
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Best Model</span>
+            <strong>{{ experiment.algorithm or "N/A" }}</strong>
+            <small class="text-secondary">
+                Selected by cross-validation
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Rows</span>
+            <strong>{{ experiment.rows_count or "N/A" }}</strong>
+            <small class="text-secondary">
+                Training dataset rows
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="metric-card h-100">
+            <span>Features</span>
+            <strong>{{ experiment.features_count or "N/A" }}</strong>
+            <small class="text-secondary">
+                Input columns
+            </small>
+        </div>
+    </div>
+
+</div>
+
+{% set params = experiment.parameters or {} %}
+{% set evaluation = params.get("evaluation", {}) %}
+{% set best = params.get("best_model", {}) %}
+{% set warnings = params.get("warnings", []) %}
+{% set saved = params.get("saved_model", {}) %}
+{% set all_models = params.get("all_models", []) %}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+
+        <h4 class="fw-bold">Experiment Information</h4>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-5">Experiment ID</dt>
+                    <dd class="col-sm-7">{{ experiment.id }}</dd>
+
+                    <dt class="col-sm-5">Dataset</dt>
+                    <dd class="col-sm-7">{{ experiment.dataset_name }}</dd>
+
+                    <dt class="col-sm-5">Task</dt>
+                    <dd class="col-sm-7">{{ experiment.task }}</dd>
+
+                    <dt class="col-sm-5">Algorithm</dt>
+                    <dd class="col-sm-7">{{ experiment.algorithm or "—" }}</dd>
+
+                </dl>
+            </div>
+
+            <div class="col-md-6">
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-5">Created</dt>
+                    <dd class="col-sm-7">{{ experiment.created_at }}</dd>
+
+                    <dt class="col-sm-5">Target</dt>
+                    <dd class="col-sm-7">
+                        {{ params.get("target") or "—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Model ID</dt>
+                    <dd class="col-sm-7">
+                        {{ saved.get("model_id", "—") }}
+                    </dd>
+
+                    <dt class="col-sm-5">Model File</dt>
+                    <dd class="col-sm-7">
+                        {{ experiment.model_path or "—" }}
+                    </dd>
+
+                </dl>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-3">Best Model Metrics</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for key, value in experiment.metrics.items() %}
+
+                    <tr>
+                        <td>{{ key|replace("_", " ")|title }}</td>
+                        <td><strong>{{ value }}</strong></td>
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="2" class="text-secondary">
+                            No metrics recorded.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% if evaluation %}
+
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold">Evaluation</h4>
+
+        <div class="row g-3">
+
+            {% if evaluation.get("train_rows") is not none %}
+            <div class="col-md-4">
+                <div class="p-3 border rounded">
+                    <small class="text-secondary">Training Rows</small>
+                    <div class="fs-4 fw-bold">
+                        {{ evaluation.get("train_rows") }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if evaluation.get("test_rows") is not none %}
+            <div class="col-md-4">
+                <div class="p-3 border rounded">
+                    <small class="text-secondary">Test Rows</small>
+                    <div class="fs-4 fw-bold">
+                        {{ evaluation.get("test_rows") }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if best.get("cv_folds") is not none %}
+            <div class="col-md-4">
+                <div class="p-3 border rounded">
+                    <small class="text-secondary">CV Folds</small>
+                    <div class="fs-4 fw-bold">
+                        {{ best.get("cv_folds") }}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {% if experiment.task == "classification" and evaluation.get("confusion_matrix") %}
+
+        {% set cm = evaluation.get("confusion_matrix") %}
+
+        <hr>
+
+        <h5 class="fw-bold">Confusion Matrix</h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered text-center">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Actual / Predicted</th>
+
+                        {% for label in cm.labels %}
+                        <th>{{ label }}</th>
+                        {% endfor %}
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in cm.matrix %}
+
+                    <tr>
+
+                        <th class="table-light">
+                            {{ cm.labels[loop.index0] }}
+                        </th>
+
+                        {% for value in row %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% if warnings %}
+
+<div class="card border-warning mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold text-warning-emphasis">
+            Dataset Warnings
+        </h4>
+
+        <ul class="mb-0">
+
+        {% for warning in warnings %}
+            <li class="mb-2">{{ warning }}</li>
+        {% endfor %}
+
+        </ul>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% if all_models %}
+
+<div class="card border-0 shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold">Model Comparison</h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Model</th>
+
+                        {% if experiment.task == "classification" %}
+
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>F1</th>
+                        <th>CV Accuracy</th>
+                        <th>CV F1</th>
+
+                        {% else %}
+
+                        <th>MAE</th>
+                        <th>RMSE</th>
+                        <th>R²</th>
+                        <th>CV MAE</th>
+                        <th>CV R²</th>
+
+                        {% endif %}
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for model in all_models %}
+
+                    <tr class="{% if model.get('model') == experiment.algorithm %}table-success{% endif %}">
+
+                        <td>
+                            <strong>{{ model.get("model", "Unknown") }}</strong>
+
+                            {% if model.get("model") == experiment.algorithm %}
+                            <span class="badge text-bg-success">Best</span>
+                            {% endif %}
+                        </td>
+
+                        {% if experiment.task == "classification" %}
+
+                        <td>{{ model.get("accuracy", "—") }}</td>
+                        <td>{{ model.get("precision", "—") }}</td>
+                        <td>{{ model.get("recall", "—") }}</td>
+                        <td>{{ model.get("f1", "—") }}</td>
+                        <td>{{ model.get("cv_accuracy_mean", "—") }}</td>
+                        <td>{{ model.get("cv_f1_mean", "—") }}</td>
+
+                        {% else %}
+
+                        <td>{{ model.get("mae", "—") }}</td>
+                        <td>{{ model.get("rmse", "—") }}</td>
+                        <td>{{ model.get("r2", "—") }}</td>
+                        <td>{{ model.get("cv_mae_mean", "—") }}</td>
+                        <td>{{ model.get("cv_r2_mean", "—") }}</td>
+
+                        {% endif %}
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<div class="d-flex gap-2 mb-5">
+
+    <a href="{{ url_for('experiments') }}"
+       class="btn btn-outline-secondary">
+        Back to History
+    </a>
+
+    <a href="{{ url_for('index') }}"
+       class="btn btn-primary">
+        New Experiment
+    </a>
+
+</div>
+
+{% endblock %}

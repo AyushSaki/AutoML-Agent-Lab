@@ -1,0 +1,212 @@
+"""Export saved AutoML models as portable prediction packages."""
+
+import argparse
+import json
+import shutil
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+import joblib
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent.parent
+MODEL_DIR = ROOT / "models"
+PACKAGE_DIR = ROOT / "model_packages"
+
+
+def create_package(model_id):
+    model_file = MODEL_DIR / f"{model_id}.joblib"
+    metadata_file = MODEL_DIR / f"{model_id}.json"
+
+    if not model_file.is_file() or not metadata_file.is_file():
+        raise FileNotFoundError(
+            f"Model '{model_id}' needs both .joblib and .json files."
+        )
+
+    metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+    features = metadata.get("features")
+
+    if not isinstance(features, list) or not features:
+        raise ValueError(
+            f"{metadata_file.name} does not contain a valid feature-name list."
+        )
+
+    # Verify that the saved model can actually be loaded.
+    joblib.load(model_file)
+
+    PACKAGE_DIR.mkdir(parents=True, exist_ok=True)
+    package = PACKAGE_DIR / f"{model_id}_model_package"
+    package.mkdir(parents=True, exist_ok=True)
+
+    shutil.copy2(model_file, package / "model.joblib")
+    shutil.copy2(metadata_file, package / "metadata.json")
+
+    predict_script = r'''"""Run predictions using an exported AutoML model."""
+
+import argparse
+import json
+from pathlib import Path
+
+import joblib
+import pandas as pd
+
+HERE = Path(__file__).resolve().parent
+
+
+def predict(input_csv, output_csv):
+    metadata = json.loads(
+        (HERE / "metadata.json").read_text(encoding="utf-8")
+    )
+    features = metadata["features"]
+    data = pd.read_csv(input_csv)
+
+    missing = [name for name in features if name not in data.columns]
+    if missing:
+        raise ValueError(
+            "Input CSV is missing required feature columns: "
+            + ", ".join(missing)
+        )
+
+    model = joblib.load(HERE / "model.joblib")
+    predictions = model.predict(data.loc[:, features].copy())
+
+    result = data.copy()
+    result["prediction"] = predictions
+
+    if hasattr(model, "predict_proba"):
+        try:
+            probabilities = model.predict_proba(data.loc[:, features].copy())
+            for index, label in enumerate(model.classes_):
+                result[f"probability_{label}"] = probabilities[:, index]
+        except (ValueError, AttributeError):
+            pass
+
+    result.to_csv(output_csv, index=False)
+    print(f"Predictions saved to: {output_csv}")
+    print(f"Rows predicted: {len(result)}")
+    print(f"Target: {metadata.get('target', 'prediction')}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Predict with an exported AutoML model."
+    )
+    parser.add_argument("--input", required=True, help="Input CSV file")
+    parser.add_argument("--output", default="predictions.csv")
+    args = parser.parse_args()
+    predict(args.input, args.output)
+'''
+
+    (package / "predict.py").write_text(
+        predict_script, encoding="utf-8"
+    )
+
+    requirements = """pandas>=2.0
+scikit-learn>=1.3
+joblib>=1.3
+"""
+    (package / "requirements.txt").write_text(
+        requirements, encoding="utf-8"
+    )
+
+    readme = f"""# AutoML-Agent-Lab Model Package
+
+Model ID: `{model_id}`
+
+## Model information
+
+- Model: {metadata.get('model', 'Not specified')}
+- Task: {metadata.get('task', 'Not specified')}
+- Target: {metadata.get('target', 'Not specified')}
+- Features: {len(features)}
+
+## Files
+
+- `model.joblib` — saved model and preprocessing pipeline
+- `metadata.json` — target, feature names, and model metadata
+- `predict.py` — command-line prediction tool
+- `requirements.txt` — Python dependencies
+
+## Setup
+
+Use Python 3.12 or a compatible Python version. Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+## Predict from a CSV
+
+The input CSV must contain all required feature columns. It must not need
+the target column.
+
+```bash
+python predict.py --input your_data.csv --output predictions.csv
+```
+
+The output CSV preserves the input columns and adds `prediction`.
+For compatible classifiers, class probabilities are included too.
+
+## Important
+
+Only use trusted model files. Loading a joblib model can execute code.
+"""
+    (package / "README.md").write_text(readme, encoding="utf-8")
+
+    zip_path = PACKAGE_DIR / f"{model_id}_model_package.zip"
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as archive:
+        for file in package.iterdir():
+            if file.is_file():
+                archive.write(file, arcname=f"{package.name}/{file.name}")
+
+    return zip_path, metadata
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Export saved AutoML models into portable ZIP packages."
+    )
+    parser.add_argument(
+        "--model-id",
+        help="Export one model ID. If omitted, list available models.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Export all models with valid metadata.",
+    )
+    args = parser.parse_args()
+
+    if args.all and args.model_id:
+        parser.error("Use --all or --model-id, not both.")
+
+    if args.all:
+        model_files = sorted(MODEL_DIR.glob("*.joblib"))
+        if not model_files:
+            raise SystemExit("No saved .joblib models were found.")
+
+        succeeded = 0
+        for model_file in model_files:
+            try:
+                zip_path, metadata = create_package(model_file.stem)
+                print(f"EXPORTED: {zip_path}")
+                succeeded += 1
+            except Exception as exc:
+                print(f"SKIPPED {model_file.stem}: {exc}")
+
+        print(f"\nExported {succeeded} model package(s).")
+        return
+
+    if args.model_id:
+        zip_path, metadata = create_package(args.model_id)
+        print(f"Exported: {zip_path}")
+        return
+
+    print("Available saved models:")
+    for model_file in sorted(MODEL_DIR.glob("*.joblib")):
+        print(f"  {model_file.stem}")
+
+
+if __name__ == "__main__":
+    main()

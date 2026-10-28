@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Workspace — AutoML Agent Lab{% endblock %}
+{% block content %}
+<section class="workspace-wrap">
+  <div class="container">
+    <div class="workspace-heading">
+      <div><div class="section-kicker">YOUR WORKSPACE</div><h1>Good to see you, {{ session.get('username') }}.</h1><p>Start with a dataset, or continue with one of your analysis tools.</p></div>
+      <span class="workspace-status"><i></i> Local workspace</span>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="upload-panel">
+          <div class="upload-title"><div class="feature-icon blue">↑</div><div><h2>Start a new analysis</h2><p>Upload a dataset to inspect its quality and begin an ML workflow.</p></div></div>
+          <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+            <div class="upload-drop">
+              <div class="upload-symbol">⇧</div>
+              <h3>Choose your dataset</h3>
+              <p>CSV, XLSX or XLS files · maximum 50 MB</p>
+              <input class="form-control" type="file" name="dataset" accept=".csv,.xlsx,.xls" required>
+            </div>
+            <button class="btn btn-primary btn-lg mt-3" type="submit">Analyze dataset →</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="quick-panel"><div class="section-kicker">QUICK ACCESS</div><h2>Explore tools</h2>
+          <a class="tool-link" href="{{ url_for('experiments') }}"><span>◷</span><div><strong>Experiment history</strong><small>Review previous runs</small></div><b>→</b></a>
+          <a class="tool-link" href="{{ url_for('model_packages') }}"><span>⬡</span><div><strong>Model packages</strong><small>Browse saved models</small></div><b>→</b></a>
+          <a class="tool-link" href="{{ url_for('dataset_lab') }}"><span>◫</span><div><strong>Dataset Lab</strong><small>Analyze and report</small></div><b>→</b></a>
+          <a class="tool-link" href="{{ url_for('dataset_compare') }}"><span>⇄</span><div><strong>Compare datasets</strong><small>Explore differences</small></div><b>→</b></a>
+          <a class="tool-link" href="{{ url_for('dataset_discovery') }}"><span>⌕</span><div><strong>Discover datasets</strong><small>Find available datasets</small></div><b>→</b></a>
+          <a class="tool-link" href="{{ url_for('project_planner') }}"><span>✧</span><div><strong>Project planner</strong><small>Plan an ML project</small></div><b>→</b></a>
+        </div>
+      </div>
+    </div>
+    <div class="workspace-note"><strong>Before you train:</strong> check the target column, data quality, and whether your dataset is suitable for the task. Model metrics are estimates of performance, not guarantees.</div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Experiment History | AutoML-Agent-Lab{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Experiment History</h1>
+            <p class="text-secondary mb-0">Your most recent model-training runs.</p>
+        </div>
+        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Back to Dashboard</a>
+    </div>
+
+    {% if experiments %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Experiment</th>
+                    <th>Task</th>
+                    <th>Algorithm</th>
+                    <th>Dataset</th>
+                    <th>Rows</th>
+                    <th>Created</th>
+                    <th>Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exp in experiments %}
+                <tr>
+                    <td>{{ exp.id }}</td>
+                    <td>{{ exp.name }}</td>
+                    <td>{{ exp.task }}</td>
+                    <td>{{ exp.algorithm or "—" }}</td>
+                    <td>{{ exp.dataset_name or "—" }}</td>
+                    <td>{{ exp.rows_count if exp.rows_count is not none else "—" }}</td>
+                    <td>{{ exp.created_at }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{{ url_for('experiment_report', experiment_id=exp.id) }}">
+                            Download Markdown
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        No experiments have been recorded yet. Train a model from the dashboard to start your history.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

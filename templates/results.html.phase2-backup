@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Model Results{% endblock %}
+{% block content %}
+<div class="mb-4"><h2 class="fw-bold">Model Results</h2><p class="text-secondary">{{ result.dataset }} · {{ result.task }} · target: <strong>{{ result.target }}</strong></p></div>
+
+<div class="row g-3 mb-4">
+<div class="col-md-4"><div class="metric-card"><span>Best Model</span><strong class="fs-4">{{ result.best_model.model }}</strong></div></div>
+<div class="col-md-4"><div class="metric-card"><span>Rows</span><strong>{{ result.rows }}</strong></div></div>
+<div class="col-md-4"><div class="metric-card"><span>Features</span><strong>{{ result.features }}</strong></div></div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+<div class="card-body">
+<h5 class="fw-bold">Model Comparison</h5>
+<div class="table-responsive"><table class="table align-middle">
+<thead><tr>{% for key in result.models[0].keys() %}<th>{{ key|replace('_',' ')|title }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in result.models %}<tr>{% for key, value in row.items() %}<td>{{ value }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>
+</div></div>
+
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+<h5 class="fw-bold">Ask the Local AI</h5>
+<p class="text-secondary">Requires Ollama running locally.</p>
+<div class="input-group">
+<input id="question" class="form-control" placeholder="Why is this model the best?">
+<button id="askBtn" class="btn btn-outline-primary">Ask AI</button>
+</div>
+<div id="answer" class="ai-answer mt-3">Your answer will appear here.</div>
+</div></div>
+
+<script>
+const context = {{ result|tojson }};
+document.getElementById("askBtn").onclick = async () => {
+  const question = document.getElementById("question").value;
+  const box = document.getElementById("answer");
+  box.textContent = "Thinking with local Ollama...";
+  const form = new URLSearchParams({question, context: JSON.stringify(context)});
+  const res = await fetch("/ask", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:form});
+  const data = await res.json();
+  box.textContent = data.answer;
+};
+</script>
+{% endblock %}

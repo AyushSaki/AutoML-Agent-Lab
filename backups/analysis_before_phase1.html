@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Dataset Analysis{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div><h2 class="fw-bold mb-1">Dataset Analysis</h2><p class="text-secondary mb-0">{{ filename }}</p></div>
+</div>
+
+<div class="row g-3 mb-4">
+{% for label, value in [('Rows', profile.rows), ('Columns', profile.columns), ('Missing Values', profile.missing_values), ('Duplicates', profile.duplicate_rows)] %}
+<div class="col-md-3"><div class="metric-card"><span>{{ label }}</span><strong>{{ value }}</strong></div></div>
+{% endfor %}
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+<div class="card-body">
+<h5 class="fw-bold">Train Models</h5>
+<form action="{{ url_for('train') }}" method="post">
+  <input type="hidden" name="file_path" value="{{ profile.file_path }}">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Target column</label>
+      <select class="form-select" name="target">
+        {% for col in profile.column_names %}<option value="{{ col }}">{{ col }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Task</label>
+      <select class="form-select" name="task">
+        <option value="auto">Auto Detect</option>
+        <option value="classification">Classification</option>
+        <option value="regression">Regression</option>
+      </select>
+    </div>
+    <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">Train</button></div>
+  </div>
+</form>
+</div></div>
+
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+<h5 class="fw-bold">Preview</h5>
+<div class="table-responsive"><table class="table table-hover">
+<thead><tr>{% for col in profile.column_names %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in profile.preview %}<tr>{% for col in profile.column_names %}<td>{{ row.get(col, '') }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+</table></div>
+</div></div>
+{% endblock %}

@@ -1,0 +1,11 @@
+services:
+  automl:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: mistral
+    volumes:
+      - ./uploads:/app/uploads
+      - ./reports:/app/reports

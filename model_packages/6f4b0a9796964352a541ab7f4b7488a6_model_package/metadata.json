@@ -1,0 +1,25 @@
+{
+  "model_id": "6f4b0a9796964352a541ab7f4b7488a6",
+  "model": "Logistic Regression",
+  "dataset": "da412662af6e41f98d5d1add91bd8e0f_loan.csv",
+  "target": "Loan_Status",
+  "task": "classification",
+  "features": [
+    "Loan_ID",
+    "Gender",
+    "Married",
+    "Dependents",
+    "Education",
+    "Self_Employed",
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "LoanAmount",
+    "Loan_Amount_Term",
+    "Credit_History",
+    "Property_Area"
+  ],
+  "classes": [
+    "N",
+    "Y"
+  ]
+}

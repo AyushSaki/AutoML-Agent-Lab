@@ -1,0 +1,21 @@
+customer_id,age,tenure_months,monthly_income,contract_type,support_plan,churn
+1,22,2,2500,Month-to-month,No,1
+2,45,48,6200,Two year,Yes,0
+3,31,8,4100,Month-to-month,No,1
+4,52,60,7800,Two year,Yes,0
+5,29,5,3300,Month-to-month,No,1
+6,39,36,5400,One year,Yes,0
+7,24,3,2800,Month-to-month,No,1
+8,48,52,7000,Two year,Yes,0
+9,35,18,4700,One year,No,0
+10,27,6,3100,Month-to-month,No,1
+11,56,72,8500,Two year,Yes,0
+12,42,30,5900,One year,Yes,0
+13,23,2,2600,Month-to-month,No,1
+14,50,55,7300,Two year,Yes,0
+15,33,12,4300,Month-to-month,No,1
+16,41,40,6100,One year,Yes,0
+17,26,4,2950,Month-to-month,No,1
+18,47,50,6900,Two year,Yes,0
+19,37,20,5000,One year,No,0
+20,30,7,3500,Month-to-month,No,1

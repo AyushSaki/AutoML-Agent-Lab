@@ -1,0 +1,16 @@
+{
+  "model_id": "f7a3ba94679a4c73bb59cf97dd4db61e",
+  "model": "Random Forest",
+  "dataset": "classification_smoke_test.csv",
+  "target": "approved",
+  "task": "classification",
+  "features": [
+    "age",
+    "income",
+    "segment"
+  ],
+  "classes": [
+    "No",
+    "Yes"
+  ]
+}

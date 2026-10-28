@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Sign in — AutoML Agent Lab{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-logo">A</div>
+    <div class="section-kicker">YOUR WORKSPACE</div>
+    <h1>Welcome back.</h1>
+    <p class="text-secondary">Sign in to continue your data science work.</p>
+    <form method="post" class="auth-form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="next" value="{{ next_url }}">
+      <label for="username">Username</label>
+      <input class="form-control" id="username" name="username" autocomplete="username" required maxlength="30">
+      <label for="password">Password</label>
+      <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="btn btn-primary btn-lg w-100 mt-3" type="submit">Sign in →</button>
+    </form>
+    <p class="auth-switch">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+    <a class="back-link" href="{{ url_for('index') }}">← Back to overview</a>
+  </div>
+  <div class="auth-aside"><div class="section-kicker">YOUR DATA WORKFLOW</div><h2>Less setup.<br><span class="gradient-text">More discovery.</span></h2><p>Analyze datasets, evaluate models, and organize experiments from one workspace.</p><div class="aside-points"><span>✓ Data profiling and EDA</span><span>✓ Model training and evaluation</span><span>✓ Reports and saved experiments</span></div></div>
+</section>
+{% endblock %}

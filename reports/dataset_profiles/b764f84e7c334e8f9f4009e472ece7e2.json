@@ -1,0 +1,649 @@
+{
+  "row_count": 506,
+  "column_count": 14,
+  "duplicate_rows": 0,
+  "missing_cells": 120,
+  "missing_percent": 1.69,
+  "numeric_column_count": 14,
+  "categorical_column_count": 0,
+  "quality_indicator": 99,
+  "quality_indicator_note": "Heuristic screening indicator, not a scientific suitability score.",
+  "columns": [
+    {
+      "name": "CRIM",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 484,
+      "unique_percent": 95.65,
+      "constant": false,
+      "sample_values": [
+        "0.00632",
+        "0.02731",
+        "0.02729",
+        "0.03237",
+        "0.06905"
+      ],
+      "statistics": {
+        "mean": 3.6118739711934156,
+        "median": 0.253715,
+        "std": 8.7201918501516,
+        "min": 0.00632,
+        "max": 88.9762
+      },
+      "iqr_outlier_count": 65,
+      "iqr_outlier_percent": 13.37
+    },
+    {
+      "name": "ZN",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 26,
+      "unique_percent": 5.14,
+      "constant": false,
+      "sample_values": [
+        "18.0",
+        "0.0",
+        "12.5",
+        "75.0",
+        "21.0"
+      ],
+      "statistics": {
+        "mean": 11.2119341563786,
+        "median": 0.0,
+        "std": 23.388876146265478,
+        "min": 0.0,
+        "max": 100.0
+      },
+      "iqr_outlier_count": 63,
+      "iqr_outlier_percent": 12.96
+    },
+    {
+      "name": "INDUS",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 76,
+      "unique_percent": 15.02,
+      "constant": false,
+      "sample_values": [
+        "2.31",
+        "7.07",
+        "2.18",
+        "7.87",
+        "8.14"
+      ],
+      "statistics": {
+        "mean": 11.083991769547325,
+        "median": 9.69,
+        "std": 6.83589649864144,
+        "min": 0.46,
+        "max": 27.74
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "CHAS",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 2,
+      "unique_percent": 0.4,
+      "constant": false,
+      "sample_values": [
+        "0.0",
+        "1.0"
+      ],
+      "statistics": {
+        "mean": 0.06995884773662552,
+        "median": 0.0,
+        "std": 0.2553404809065679,
+        "min": 0.0,
+        "max": 1.0
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "NOX",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 81,
+      "unique_percent": 16.01,
+      "constant": false,
+      "sample_values": [
+        "0.538",
+        "0.469",
+        "0.458",
+        "0.524",
+        "0.499"
+      ],
+      "statistics": {
+        "mean": 0.5546950592885376,
+        "median": 0.538,
+        "std": 0.11587767566755595,
+        "min": 0.385,
+        "max": 0.871
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "RM",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 446,
+      "unique_percent": 88.14,
+      "constant": false,
+      "sample_values": [
+        "6.575",
+        "6.421",
+        "7.185",
+        "6.998",
+        "7.147"
+      ],
+      "statistics": {
+        "mean": 6.284634387351779,
+        "median": 6.2085,
+        "std": 0.7026171434153233,
+        "min": 3.561,
+        "max": 8.78
+      },
+      "iqr_outlier_count": 30,
+      "iqr_outlier_percent": 5.93
+    },
+    {
+      "name": "AGE",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 348,
+      "unique_percent": 68.77,
+      "constant": false,
+      "sample_values": [
+        "65.2",
+        "78.9",
+        "61.1",
+        "45.8",
+        "54.2"
+      ],
+      "statistics": {
+        "mean": 68.51851851851852,
+        "median": 76.80000000000001,
+        "std": 27.99951300509237,
+        "min": 2.9,
+        "max": 100.0
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "DIS",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 412,
+      "unique_percent": 81.42,
+      "constant": false,
+      "sample_values": [
+        "4.09",
+        "4.9671",
+        "6.0622",
+        "5.5605",
+        "5.9505"
+      ],
+      "statistics": {
+        "mean": 3.795042687747036,
+        "median": 3.2074499999999997,
+        "std": 2.105710126627611,
+        "min": 1.1296,
+        "max": 12.1265
+      },
+      "iqr_outlier_count": 5,
+      "iqr_outlier_percent": 0.99
+    },
+    {
+      "name": "RAD",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 9,
+      "unique_percent": 1.78,
+      "constant": false,
+      "sample_values": [
+        "1",
+        "2",
+        "3",
+        "5",
+        "4"
+      ],
+      "statistics": {
+        "mean": 9.549407114624506,
+        "median": 5.0,
+        "std": 8.707259384239366,
+        "min": 1.0,
+        "max": 24.0
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "TAX",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 66,
+      "unique_percent": 13.04,
+      "constant": false,
+      "sample_values": [
+        "296",
+        "242",
+        "222",
+        "311",
+        "307"
+      ],
+      "statistics": {
+        "mean": 408.2371541501976,
+        "median": 330.0,
+        "std": 168.53711605495903,
+        "min": 187.0,
+        "max": 711.0
+      },
+      "iqr_outlier_count": 0,
+      "iqr_outlier_percent": 0.0
+    },
+    {
+      "name": "PTRATIO",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 46,
+      "unique_percent": 9.09,
+      "constant": false,
+      "sample_values": [
+        "15.3",
+        "17.8",
+        "18.7",
+        "15.2",
+        "21.0"
+      ],
+      "statistics": {
+        "mean": 18.455533596837945,
+        "median": 19.05,
+        "std": 2.1649455237144406,
+        "min": 12.6,
+        "max": 22.0
+      },
+      "iqr_outlier_count": 15,
+      "iqr_outlier_percent": 2.96
+    },
+    {
+      "name": "B",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 357,
+      "unique_percent": 70.55,
+      "constant": false,
+      "sample_values": [
+        "396.9",
+        "392.83",
+        "394.63",
+        "394.12",
+        "395.6"
+      ],
+      "statistics": {
+        "mean": 356.6740316205534,
+        "median": 391.44,
+        "std": 91.29486438415783,
+        "min": 0.32,
+        "max": 396.9
+      },
+      "iqr_outlier_count": 77,
+      "iqr_outlier_percent": 15.22
+    },
+    {
+      "name": "LSTAT",
+      "dtype": "float64",
+      "missing_count": 20,
+      "missing_percent": 3.95,
+      "unique_count": 438,
+      "unique_percent": 86.56,
+      "constant": false,
+      "sample_values": [
+        "4.98",
+        "9.14",
+        "4.03",
+        "2.94",
+        "5.21"
+      ],
+      "statistics": {
+        "mean": 12.715432098765431,
+        "median": 11.43,
+        "std": 7.155870815805251,
+        "min": 1.73,
+        "max": 37.97
+      },
+      "iqr_outlier_count": 7,
+      "iqr_outlier_percent": 1.44
+    },
+    {
+      "name": "MEDV",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_percent": 0.0,
+      "unique_count": 229,
+      "unique_percent": 45.26,
+      "constant": false,
+      "sample_values": [
+        "24.0",
+        "21.6",
+        "34.7",
+        "33.4",
+        "36.2"
+      ],
+      "statistics": {
+        "mean": 22.532806324110677,
+        "median": 21.2,
+        "std": 9.197104087379818,
+        "min": 5.0,
+        "max": 50.0
+      },
+      "iqr_outlier_count": 40,
+      "iqr_outlier_percent": 7.91
+    }
+  ],
+  "correlations": [
+    {
+      "column_a": "RAD",
+      "column_b": "TAX",
+      "correlation": 0.9102,
+      "strength": "strong"
+    },
+    {
+      "column_a": "NOX",
+      "column_b": "DIS",
+      "correlation": -0.7692,
+      "strength": "strong"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "NOX",
+      "correlation": 0.7649,
+      "strength": "strong"
+    },
+    {
+      "column_a": "AGE",
+      "column_b": "DIS",
+      "correlation": -0.7448,
+      "strength": "strong"
+    },
+    {
+      "column_a": "LSTAT",
+      "column_b": "MEDV",
+      "correlation": -0.7358,
+      "strength": "strong"
+    },
+    {
+      "column_a": "NOX",
+      "column_b": "AGE",
+      "correlation": 0.7315,
+      "strength": "strong"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "TAX",
+      "correlation": 0.7311,
+      "strength": "strong"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "DIS",
+      "correlation": -0.7117,
+      "strength": "strong"
+    },
+    {
+      "column_a": "RM",
+      "column_b": "MEDV",
+      "correlation": 0.6954,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "NOX",
+      "column_b": "TAX",
+      "correlation": 0.668,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "ZN",
+      "column_b": "DIS",
+      "correlation": 0.6567,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "AGE",
+      "correlation": 0.6384,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "CRIM",
+      "column_b": "RAD",
+      "correlation": 0.6248,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "RM",
+      "column_b": "LSTAT",
+      "correlation": -0.6143,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "NOX",
+      "column_b": "RAD",
+      "correlation": 0.6114,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "RAD",
+      "correlation": 0.6045,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "AGE",
+      "column_b": "LSTAT",
+      "correlation": 0.6029,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "LSTAT",
+      "correlation": 0.5907,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "NOX",
+      "column_b": "LSTAT",
+      "correlation": 0.5826,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "CRIM",
+      "column_b": "TAX",
+      "correlation": 0.5806,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "ZN",
+      "column_b": "AGE",
+      "correlation": -0.5638,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "TAX",
+      "column_b": "LSTAT",
+      "correlation": 0.5361,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "DIS",
+      "column_b": "TAX",
+      "correlation": -0.5344,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "ZN",
+      "column_b": "INDUS",
+      "correlation": -0.5319,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "ZN",
+      "column_b": "NOX",
+      "correlation": -0.5137,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "AGE",
+      "column_b": "TAX",
+      "correlation": 0.5091,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "PTRATIO",
+      "column_b": "MEDV",
+      "correlation": -0.5078,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "DIS",
+      "column_b": "RAD",
+      "correlation": -0.4946,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "DIS",
+      "column_b": "LSTAT",
+      "correlation": -0.4933,
+      "strength": "moderate"
+    },
+    {
+      "column_a": "INDUS",
+      "column_b": "MEDV",
+      "correlation": -0.4818,
+      "strength": "moderate"
+    }
+  ],
+  "possible_targets": [
+    {
+      "column": "CRIM",
+      "dtype": "float64",
+      "unique_values": 484,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "ZN",
+      "dtype": "float64",
+      "unique_values": 26,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "INDUS",
+      "dtype": "float64",
+      "unique_values": 76,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "CHAS",
+      "dtype": "float64",
+      "unique_values": 2,
+      "suggestion": "Possible classification target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "NOX",
+      "dtype": "float64",
+      "unique_values": 81,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "RM",
+      "dtype": "float64",
+      "unique_values": 446,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "AGE",
+      "dtype": "float64",
+      "unique_values": 348,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "DIS",
+      "dtype": "float64",
+      "unique_values": 412,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "RAD",
+      "dtype": "int64",
+      "unique_values": 9,
+      "suggestion": "Possible classification target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "TAX",
+      "dtype": "int64",
+      "unique_values": 66,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "PTRATIO",
+      "dtype": "float64",
+      "unique_values": 46,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "B",
+      "dtype": "float64",
+      "unique_values": 357,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "LSTAT",
+      "dtype": "float64",
+      "unique_values": 438,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    },
+    {
+      "column": "MEDV",
+      "dtype": "float64",
+      "unique_values": 229,
+      "suggestion": "Possible regression target",
+      "note": "Candidate only; confirm with the project requirements."
+    }
+  ],
+  "warnings": [
+    "120 missing cells found (1.69% of all cells)."
+  ],
+  "filename": "HousingData.csv",
+  "source": "User-uploaded dataset",
+  "report_id": "b764f84e7c334e8f9f4009e472ece7e2",
+  "synthetic": false
+}

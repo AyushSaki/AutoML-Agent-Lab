@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Experiment History | AutoML-Agent-Lab{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">Experiment History</h2>
+        <p class="text-secondary mb-0">
+            Saved AutoML training experiments.
+        </p>
+    </div>
+
+    <a href="{{ url_for('index') }}"
+       class="btn btn-primary">
+        + New Experiment
+    </a>
+
+</div>
+
+{% if experiments %}
+
+<div class="row g-4">
+
+{% for exp in experiments %}
+
+    {% set params = exp.parameters or {} %}
+    {% set best = params.get("best_model", {}) %}
+    {% set warnings = params.get("warnings", []) %}
+
+    <div class="col-lg-6">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+
+                    <div>
+
+                        <span class="badge text-bg-light border">
+                            #{{ exp.id }}
+                        </span>
+
+                        <h4 class="fw-bold mt-2 mb-1">
+                            {{ exp.dataset_name }}
+                        </h4>
+
+                        <div class="text-secondary small">
+                            {{ exp.task|title }}
+                            ·
+                            {{ exp.algorithm or "Unknown model" }}
+                        </div>
+
+                    </div>
+
+                    <span class="badge text-bg-success">
+                        Completed
+                    </span>
+
+                </div>
+
+                <div class="row g-2 mb-3">
+
+                    <div class="col-6">
+
+                        <div class="border rounded p-2">
+
+                            <small class="text-secondary d-block">
+                                Best Model
+                            </small>
+
+                            <strong>
+                                {{ exp.algorithm or "N/A" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="border rounded p-2">
+
+                            <small class="text-secondary d-block">
+                                Rows
+                            </small>
+
+                            <strong>
+                                {{ exp.rows_count or "N/A" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="border rounded p-2">
+
+                            <small class="text-secondary d-block">
+                                Features
+                            </small>
+
+                            <strong>
+                                {{ exp.features_count or "N/A" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="border rounded p-2">
+
+                            <small class="text-secondary d-block">
+                                Warnings
+                            </small>
+
+                            <strong>
+                                {{ warnings|length }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% if exp.metrics %}
+
+                <div class="border rounded p-3 mb-3">
+
+                    <h6 class="fw-bold">
+                        Best Model Metrics
+                    </h6>
+
+                    {% for key, value in exp.metrics.items() %}
+
+                    <div class="d-flex justify-content-between small py-1">
+
+                        <span class="text-secondary">
+                            {{ key|replace("_", " ")|title }}
+                        </span>
+
+                        <strong>{{ value }}</strong>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endif %}
+
+                <div class="small text-secondary mb-3">
+                    {{ exp.created_at }}
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <a class="btn btn-primary btn-sm"
+                       href="{{ url_for('experiment_detail', experiment_id=exp.id) }}">
+                        View Details
+                    </a>
+
+                    <a class="btn btn-outline-primary btn-sm"
+                       href="{{ url_for('experiment_report', experiment_id=exp.id) }}">
+                        Markdown Report
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card border-0 shadow-sm">
+
+    <div class="card-body text-center py-5">
+
+        <h4 class="fw-bold">No experiments yet</h4>
+
+        <p class="text-secondary">
+            Train your first model to create an experiment record.
+        </p>
+
+        <a href="{{ url_for('index') }}"
+           class="btn btn-primary">
+            Start Experiment
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

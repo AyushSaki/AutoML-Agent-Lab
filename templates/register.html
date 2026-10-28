@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Create account — AutoML Agent Lab{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-logo">A</div>
+    <div class="section-kicker">GET STARTED</div>
+    <h1>Create your account.</h1>
+    <p class="text-secondary">Set up your login to open the ML workspace.</p>
+    <form method="post" class="auth-form">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <label for="username">Username</label>
+      <input class="form-control" id="username" name="username" autocomplete="username" minlength="3" maxlength="30" required pattern="[A-Za-z0-9_.-]+" placeholder="e.g. ayush_saki">
+      <div class="form-text mb-3">3–30 characters: letters, numbers, dots, hyphens or underscores.</div>
+      <label for="password">Password</label>
+      <input class="form-control" id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+      <label for="confirm_password">Confirm password</label>
+      <input class="form-control" id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+      <button class="btn btn-primary btn-lg w-100 mt-3" type="submit">Create account →</button>
+    </form>
+    <p class="auth-switch">Already registered? <a href="{{ url_for('login') }}">Sign in</a></p>
+    <a class="back-link" href="{{ url_for('index') }}">← Back to overview</a>
+  </div>
+  <div class="auth-aside"><div class="section-kicker">A SIMPLE START</div><h2>Your data.<br><span class="gradient-text">Your next insight.</span></h2><p>Begin with an existing CSV or Excel file and explore the capabilities of the platform.</p><div class="aside-points"><span>✓ No paid API required for core ML</span><span>✓ Local account database</span><span>✓ Optional local Ollama integration</span></div></div>
+</section>
+{% endblock %}

@@ -1,0 +1,160 @@
+
+========================================================================
+1. ENVIRONMENT
+========================================================================
+Project: /Users/ayushsaki/Downloads/AutoML-Agent-Lab
+Python: 3.14.6
+Executable: /Users/ayushsaki/anaconda3/bin/python
+
+========================================================================
+2. PROJECT MODULES
+========================================================================
+
+[ml]
+  ml/advanced_tasks.py
+  ml/autonomous_scientist.py
+  ml/data_intelligence.py
+  ml/dataset_comparator.py
+  ml/dataset_discovery.py
+  ml/dataset_evaluator.py
+  ml/experiment_store.py
+  ml/explainability.py
+  ml/model_export.py
+  ml/model_export.py.backup-20261029-000558
+  ml/model_export.py.backup-20261029-000833
+  ml/pipeline.py
+  ml/pipeline.py.20261028_103110.bak
+  ml/pipeline.py.backup
+  ml/pipeline.py.backup-20261028-105245
+  ml/pipeline.py.backup-20261028-110222
+  ml/pipeline.py.before_persistence-20261028-105607
+  ml/pipeline.py.before_target_fix
+  ml/pipeline.py.phase1-backup
+  ml/project_analyst.py
+  ml/reporting.py
+  ml/tuning.py
+
+[ai]
+  ai/ollama_client.py
+
+[templates]
+  templates/analysis.html
+  templates/analysis.html.backup
+  templates/base.html
+  templates/base.html.backup-20261029-001253
+  templates/dataset_compare.html
+  templates/dataset_discovery.html
+  templates/dataset_lab.html
+  templates/experiment_detail.html
+  templates/experiments.html
+  templates/experiments.html.before_details
+  templates/index.html
+  templates/model_packages.html
+  templates/predict.html
+  templates/project_planner.html
+  templates/results.html
+  templates/results.html.backup-20261028-110222
+  templates/results.html.backup-20261029-000044
+  templates/results.html.phase1-backup
+  templates/results.html.phase2-backup
+
+[static]
+  static/css/style.css
+
+[tests]
+  tests/test_advanced_tasks.py
+  tests/test_automl_robustness.py
+  tests/test_experiment_reporting.py
+  tests/test_model_persistence.py
+  tests/test_pipeline.py
+
+========================================================================
+3. FLASK ROUTES
+========================================================================
+index: app.route('/')
+analyze: app.route('/analyze', methods=['POST'])
+train: app.route('/train', methods=['POST'])
+download_model_package: app.route('/download-model-package/<model_id>')
+predict_saved_model: app.route('/predict/<model_id>', methods=['GET', 'POST'])
+ask: app.route('/ask', methods=['POST'])
+autonomous_plan: app.route('/autonomous-plan', methods=['POST'])
+model_packages: app.route('/model-packages')
+experiments: app.route('/experiments')
+experiment_detail: app.route('/experiments/<int:experiment_id>')
+experiment_report: app.route('/experiments/<int:experiment_id>/report')
+health: app.route('/health')
+project_planner: app.route('/project-planner', methods=['GET', 'POST'])
+project_brief_json: app.route('/project-planner/<brief_id>.json')
+dataset_lab: app.route('/dataset-lab', methods=['GET', 'POST'])
+dataset_profile_json: app.route('/dataset-lab/report/<report_id>.json')
+dataset_compare: app.route('/dataset-compare', methods=['GET', 'POST'])
+dataset_comparison_json: app.route('/dataset-compare/report/<report_id>.json')
+dataset_discovery: app.route('/dataset-discovery', methods=['GET'])
+dataset_discovery_download: app.route('/dataset-discovery/download', methods=['POST'])
+
+========================================================================
+4. REQUIRED FEATURE FILES
+========================================================================
+OK       ml/pipeline.py
+OK       ml/data_intelligence.py
+OK       ml/autonomous_scientist.py
+OK       ml/experiment_store.py
+OK       ml/reporting.py
+OK       ml/tuning.py
+OK       ml/explainability.py
+OK       ml/advanced_tasks.py
+OK       ml/model_export.py
+OK       templates/base.html
+OK       templates/results.html
+OK       templates/model_packages.html
+
+========================================================================
+5. TODO / PLACEHOLDER SCAN
+========================================================================
+templates/dataset_discovery.html:53: placeholder="Example: house price prediction"
+templates/dataset_compare.html:17: value="{{ form.get('target', '') }}" placeholder="Example: SalePrice">
+templates/project_planner.html:14: value="{{ form.get('topic', '') }}" placeholder="Example: House price prediction">
+templates/project_planner.html:19: placeholder="What problem should the system solve?">{{ form.get('problem', '') }}</textarea>
+templates/project_planner.html:24: value="{{ form.get('users', '') }}" placeholder="Example: buyers, analysts, internal staff">
+templates/project_planner.html:29: placeholder="Example: MAE below a business-approved threshold">{{ form.get('success', '') }}</textarea>
+templates/project_planner.html:34: placeholder="Example: free tools, local processing, privacy, available hardware">{{ form.get('constraints', '') }}</textarea>
+templates/results.html:243: placeholder="Why is this model the best?">
+
+========================================================================
+6. SAVED MODELS AND ZIP PACKAGES
+========================================================================
+Saved model files: 12
+Metadata files: 12
+ZIP packages: 12
+00c85e0c5ca544e2a253c0dc74af6b4a_model_package.zip: OK
+15d9ddab88ab4307b60d4c5092e0650e_model_package.zip: OK
+37b281cf64744192a438655fe5a781f3_model_package.zip: OK
+4f2a3b99e61845bcb2aca4121eed6047_model_package.zip: OK
+4f2c980a63dc4c348b451ef8e3d38242_model_package.zip: OK
+6f4b0a9796964352a541ab7f4b7488a6_model_package.zip: OK
+7d346e7fca044524a01f93259b49eb4f_model_package.zip: OK
+c2446dace6864c538fb3e52c1926db93_model_package.zip: OK
+e0ec2d74581944428bad0368006c2b99_model_package.zip: OK
+e9536070b1e145dfa946309a3369cb53_model_package.zip: OK
+eea8c9aaf9f54af58f04ce4f9d2d4a8a_model_package.zip: OK
+f7a3ba94679a4c73bb59cf97dd4db61e_model_package.zip: OK
+
+========================================================================
+7. PYTHON SYNTAX CHECK
+========================================================================
+Syntax OK: 15 Python files checked
+
+========================================================================
+8. TEST SUITE
+========================================================================
+......................                                                   [100%]
+22 passed in 6.59s
+
+Pytest exit code: 0
+
+========================================================================
+9. FLASK ROUTE SMOKE TEST
+========================================================================
+GET /: HTTP 200
+GET /experiments: HTTP 200
+GET /model-packages: HTTP 200

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>{% block title %}AutoML Agent Lab{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+      <span class="brand-mark">A</span> AutoML<span class="brand-light"> Agent Lab</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <div class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        {% if session.get('user_id') %}
+          <a class="nav-link" href="{{ url_for('workspace') }}">Workspace</a>
+          <a class="nav-link" href="{{ url_for('experiments') }}">Experiments</a>
+          <a class="nav-link" href="{{ url_for('model_packages') }}">Models</a>
+          <a class="nav-link" href="{{ url_for('project_planner') }}">Project Planner</a>
+          <a class="nav-link" href="{{ url_for('dataset_lab') }}">Dataset Lab</a>
+          <a class="nav-link" href="{{ url_for('dataset_compare') }}">Compare</a>
+          <a class="nav-link" href="{{ url_for('dataset_discovery') }}">Discover</a>
+          <span class="nav-link text-white-50 small">{{ session.get('username') }}</span>
+          <form method="post" action="{{ url_for('logout') }}" class="d-inline">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-light btn-sm" type="submit">Sign out</button>
+          </form>
+        {% else %}
+          <a class="nav-link" href="{{ url_for('index') }}#features">Features</a>
+          <a class="nav-link" href="{{ url_for('login') }}">Sign in</a>
+          <a class="btn btn-primary btn-sm px-3" href="{{ url_for('register') }}">Get started</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="page-main">
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show mt-3" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="app-footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+    <span>◈ AutoML Agent Lab</span>
+    <span>Built with Flask · pandas · scikit-learn · optional local Ollama AI</span>
+    <span>Local-first machine learning workspace</span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

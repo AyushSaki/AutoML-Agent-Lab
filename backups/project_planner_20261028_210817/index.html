@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<section class="hero p-5 mb-4">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <span class="badge rounded-pill text-bg-light border mb-3">LOCAL AI / MACHINE LEARNING</span>
+      <h1 class="display-5 fw-bold">Autonomous Data Science Platform</h1>
+      <p class="lead text-secondary">Upload a dataset and let the platform profile, preprocess, train and compare machine-learning models.</p>
+    </div>
+    <div class="col-lg-4 text-center">
+      <div class="hero-icon">AI</div>
+    </div>
+  </div>
+</section>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-4">
+    <h4 class="fw-bold">Start an ML experiment</h4>
+    <p class="text-secondary">Supported: CSV, XLSX, XLS</p>
+    <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+      <div class="upload-box mb-3">
+        <input class="form-control form-control-lg" type="file" name="dataset" accept=".csv,.xlsx,.xls" required>
+      </div>
+      <button class="btn btn-primary btn-lg px-4">Analyze Dataset →</button>
+    </form>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-md-4"><div class="info-card"><h5>Dataset Agent</h5><p>Profiles columns, missing values, types and duplicates.</p></div></div>
+  <div class="col-md-4"><div class="info-card"><h5>ML Engine</h5><p>Compares classification and regression algorithms.</p></div></div>
+  <div class="col-md-4"><div class="info-card"><h5>Local AI</h5><p>Ask questions about your experiment using Ollama.</p></div></div>
+</div>
+{% endblock %}

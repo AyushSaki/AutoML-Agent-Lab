@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dataset Comparison | AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1>Dataset &amp; Model Comparison Lab</h1>
+  <p>Compare candidate datasets for the same target and task. Structural quality and held-out model performance are reported separately.</p>
+
+  <form method="post" enctype="multipart/form-data" class="card p-4 mb-4">
+    <div class="mb-3">
+      <label class="form-label" for="datasets">Candidate datasets (choose 2–5 files)</label>
+      <input class="form-control" type="file" id="datasets" name="datasets"
+             accept=".csv,.xlsx,.xls" multiple required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="target">Target column name (must exist in each dataset)</label>
+      <input class="form-control" id="target" name="target" required
+             value="{{ form.get('target', '') }}" placeholder="Example: SalePrice">
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="task">Machine learning task</label>
+      <select class="form-select" id="task" name="task">
+        <option value="regression" {% if form.get('task', 'regression') == 'regression' %}selected{% endif %}>Regression — predict a numeric value</option>
+        <option value="classification" {% if form.get('task') == 'classification' %}selected{% endif %}>Classification — predict a category</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" type="submit">Compare Datasets and Models</button>
+    <small class="text-muted mt-2">Each file is evaluated separately with the same split seed and baseline algorithms. Files are processed in memory and not saved as uploaded datasets by this feature.</small>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if comparison %}
+  <div class="card p-4 mb-4">
+    <h2>Comparison Summary</h2>
+    <p><strong>Target:</strong> {{ comparison.target }} | <strong>Task:</strong> {{ comparison.task }}</p>
+    <p class="text-muted">Do not treat the highest quality indicator as the automatic winner. Review model metrics and each dataset's suitability for the client requirements.</p>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead><tr>
+          <th>Dataset</th><th>Rows used</th><th>Features</th><th>Quality indicator</th><th>Best tested model</th><th>Best metrics</th>
+        </tr></thead>
+        <tbody>
+        {% for item in comparison.datasets %}
+        <tr>
+          <td>{{ item.filename }}</td>
+          <td>{{ item.rows_used }}</td>
+          <td>{{ item.features_used }}</td>
+          <td>{{ item.quality_indicator }}/100</td>
+          <td>{{ item.best_model }}</td>
+          <td>{% for key, value in item.best_metrics.items() %}
+            <div><small>{{ key }}: {{ value if value is not none else 'N/A' }}</small></div>
+          {% endfor %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mt-4">Dataset-specific observations</h3>
+    {% for item in comparison.datasets %}
+    <div class="border rounded p-3 mb-3">
+      <h4>{{ item.filename }}</h4>
+      <p><strong>Evaluation:</strong> {{ item.evaluation_method }}</p>
+      <p><strong>Ranking rule:</strong> {{ item.ranking_rule }}</p>
+      <h5>Model results</h5>
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead><tr><th>Model</th>{% for metric in item.models[0].metrics.keys() %}<th>{{ metric }}</th>{% endfor %}</tr></thead>
+          <tbody>{% for model in item.models %}
+            <tr><td>{{ model.model }}</td>{% for value in model.metrics.values() %}<td>{{ value if value is not none else 'N/A' }}</td>{% endfor %}</tr>
+          {% endfor %}</tbody>
+        </table>
+      </div>
+      <h5>Data quality notes</h5>
+      <ul>{% for note in item.quality_notes %}<li>{{ note }}</li>{% endfor %}</ul>
+    </div>
+    {% endfor %}
+
+    <h3 class="mt-4">Interpretation limits</h3>
+    <ul>{% for note in comparison.limitations %}<li>{{ note }}</li>{% endfor %}</ul>
+    <a class="btn btn-outline-primary" href="{{ url_for('dataset_comparison_json', report_id=report_id) }}">Download comparison JSON</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

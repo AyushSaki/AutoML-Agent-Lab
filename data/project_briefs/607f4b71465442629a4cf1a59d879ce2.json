@@ -1,0 +1,53 @@
+{
+  "topic": "loan predication",
+  "business_problem": "how much loan to recover",
+  "intended_users": "",
+  "constraints": "",
+  "success_criteria": "",
+  "deployment": "Flask",
+  "detected_task": "needs_clarification",
+  "task_confidence": "Initial keyword-based suggestion; requires user confirmation",
+  "recommendation": "Confirm the problem type and intended output before selecting algorithms.",
+  "clarifying_questions": [
+    "Who will use the system and what will they do with its output?",
+    "How will success be measured, and what level of error is acceptable?",
+    "Are there constraints on budget, privacy, hardware, data volume, or tools?"
+  ],
+  "future_scope": [
+    {
+      "phase": 1,
+      "name": "Clarify requirements",
+      "deliverable": "Approved project brief and success criteria"
+    },
+    {
+      "phase": 2,
+      "name": "Assess datasets",
+      "deliverable": "Data quality, suitability, source and licence review"
+    },
+    {
+      "phase": 3,
+      "name": "Build baseline",
+      "deliverable": "Preprocessing pipeline and baseline model"
+    },
+    {
+      "phase": 4,
+      "name": "Compare and validate",
+      "deliverable": "Consistent holdout or cross-validation results"
+    },
+    {
+      "phase": 5,
+      "name": "Package delivery",
+      "deliverable": "Model artifact, inference code, report and setup guide"
+    }
+  ],
+  "data_policy": [
+    "Validate actual dataset contents before making suitability claims.",
+    "Record source and licence for externally obtained datasets.",
+    "Clearly label synthetic data and never describe it as real-world data.",
+    "Compare dataset quality separately from model performance.",
+    "Use held-out data or cross-validation to reduce evaluation leakage."
+  ],
+  "brief_id": "607f4b71465442629a4cf1a59d879ce2",
+  "created_at": "2026-10-28T15:40:44.302737+00:00",
+  "status": "draft_requires_user_review"
+}

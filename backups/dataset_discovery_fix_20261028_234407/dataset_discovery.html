@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dataset Discovery | AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1>Verified Dataset Discovery</h1>
+  <p>Search the live UCI Machine Learning Repository, inspect returned metadata, and download supported datasets for local evaluation.</p>
+
+  <div class="alert alert-info">
+    Repository metadata and successful downloads can be checked automatically. Licence permission and suitability for your client must still be reviewed.
+  </div>
+
+  <form method="get" action="{{ url_for('dataset_discovery') }}" class="card p-4 mb-4">
+    <label class="form-label" for="q">Project topic or dataset keywords</label>
+    <input class="form-control mb-3" id="q" name="q" value="{{ query }}"
+           placeholder="Example: house prices, customer churn, fraud detection" required>
+    <button class="btn btn-primary" type="submit">Search UCI Repository</button>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if results %}
+  <h2>Search results</h2>
+  <p class="text-muted">Results are returned by the live repository API. Search ranking is not a suitability recommendation.</p>
+
+  {% for item in results %}
+  <div class="card p-3 mb-3">
+    <h3>{{ item.name }}</h3>
+    <p>{{ item.description or 'No short description was returned by the search endpoint.' }}</p>
+    <p><strong>UCI dataset ID:</strong> {{ item.id }}</p>
+    {% if item.task %}<p><strong>Repository task metadata:</strong> {{ item.task }}</p>{% endif %}
+    {% if item.instances %}<p><strong>Reported instances:</strong> {{ item.instances }}</p>{% endif %}
+    {% if item.features %}<p><strong>Reported features:</strong> {{ item.features }}</p>{% endif %}
+    <p><a href="https://archive.ics.uci.edu/dataset/{{ item.id }}" target="_blank" rel="noopener">Open dataset page</a></p>
+    <form method="post" action="{{ url_for('dataset_discovery_download') }}">
+      <input type="hidden" name="dataset_id" value="{{ item.id }}">
+      <button class="btn btn-outline-primary" type="submit">Download and validate CSV</button>
+    </form>
+  </div>
+  {% endfor %}
+  {% elif searched %}
+  <p>No results returned. Try broader keywords or check the repository connection.</p>
+  {% endif %}
+
+  {% if downloaded %}
+  <div class="card p-4 mt-4">
+    <h2>Dataset downloaded and parsed</h2>
+    <p><strong>Name:</strong> {{ downloaded.metadata.get('name', 'Unknown') }}</p>
+    <p><strong>Rows parsed:</strong> {{ downloaded.rows }}</p>
+    <p><strong>Columns parsed:</strong> {{ downloaded.columns }}</p>
+    <p><strong>Local file:</strong> <code>{{ downloaded.local_path }}</code></p>
+    <p><strong>Metadata JSON:</strong> <code>{{ downloaded.metadata_path }}</code></p>
+    <p><strong>Licence review:</strong> {{ downloaded.metadata.license_status }}</p>
+    <p><strong>Data URL:</strong> <a href="{{ downloaded.metadata.downloaded_data_url }}" target="_blank" rel="noopener">Repository data URL</a></p>
+    <p class="text-muted">A successful download confirms that the file was fetched and parsed, not that it is suitable for your project or licensed for every use.</p>
+
+    <h3>Column preview</h3>
+    <p>{{ downloaded.column_names | join(', ') }}</p>
+
+    <h3>First five rows</h3>
+    {% if downloaded.preview %}
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr>{% for col in downloaded.column_names[:12] %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+        <tbody>
+        {% for row in downloaded.preview %}
+          <tr>{% for col in downloaded.column_names[:12] %}<td>{{ row.get(col, '') }}</td>{% endfor %}</tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    <p><strong>SHA-256:</strong> <code>{{ downloaded.metadata.data_sha256 }}</code></p>
+    <p>{{ downloaded.metadata.reuse_warning }}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

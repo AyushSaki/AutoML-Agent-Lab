@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Saved Model Predictions | AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-sm mb-3">
+    &larr; Dashboard
+  </a>
+  <h2 class="fw-bold">Predict with a Saved Model</h2>
+  <p class="text-secondary">Model ID: <code>{{ model_id }}</code></p>
+  <p>Upload a new CSV or Excel file containing the model's required feature columns.
+     You do not need to include the training target column.</p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+      <label for="dataset" class="form-label fw-semibold">Prediction dataset</label>
+      <input class="form-control mb-3" id="dataset" name="dataset"
+             type="file" accept=".csv,.xlsx,.xls" required>
+      <button class="btn btn-primary" type="submit">Generate Predictions</button>
+    </form>
+  </div>
+</div>
+
+{% if result %}
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h4 class="fw-bold">Prediction Results</h4>
+    <p class="text-secondary">
+      {{ result.rows }} rows · {{ result.task|title }} · Target: {{ result.target }}
+    </p>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead><tr><th>Row</th><th>Prediction</th></tr></thead>
+        <tbody>
+        {% for prediction in result.predictions %}
+          <tr><td>{{ loop.index }}</td><td>{{ prediction }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-secondary mb-0">
+      Showing predictions for all uploaded rows. Review model evaluation metrics
+      before using predictions for important decisions.
+    </p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

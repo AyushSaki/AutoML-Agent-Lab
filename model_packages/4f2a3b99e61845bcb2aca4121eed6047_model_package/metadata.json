@@ -1,0 +1,25 @@
+{
+  "model_id": "4f2a3b99e61845bcb2aca4121eed6047",
+  "model": "Random Forest",
+  "dataset": "3879bb387db84893a643934b8e2cea77_loan.csv",
+  "target": "Married",
+  "task": "classification",
+  "features": [
+    "Loan_ID",
+    "Gender",
+    "Dependents",
+    "Education",
+    "Self_Employed",
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "LoanAmount",
+    "Loan_Amount_Term",
+    "Credit_History",
+    "Property_Area",
+    "Loan_Status"
+  ],
+  "classes": [
+    "No",
+    "Yes"
+  ]
+}

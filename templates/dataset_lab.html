@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Dataset Intelligence Lab | AutoML-Agent-Lab{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h1>Dataset Intelligence Lab</h1>
+  <p>Profile CSV and Excel files before training. Your uploaded file is processed locally by this app.</p>
+
+  <form method="post" enctype="multipart/form-data" class="card p-4 mb-4">
+    <label class="form-label" for="dataset">Choose a CSV or Excel dataset</label>
+    <input class="form-control mb-3" type="file" id="dataset" name="dataset"
+           accept=".csv,.xlsx,.xls" required>
+    <button class="btn btn-primary" type="submit">Inspect Dataset</button>
+    <small class="text-muted mt-2">First worksheet is used for Excel files. Maximum upload size: 50 MB.</small>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if report %}
+  <div class="card p-4 mb-4">
+    <div class="d-flex justify-content-between flex-wrap gap-2">
+      <div>
+        <h2>{{ filename }}</h2>
+        <p class="text-muted">Structural assessment — not yet a model-performance evaluation.</p>
+      </div>
+      <a class="btn btn-outline-primary align-self-start"
+         href="{{ url_for('dataset_profile_json', report_id=report_id) }}">Download JSON report</a>
+    </div>
+
+    <div class="row g-3 my-2">
+      {% for label, value in [
+        ('Rows', report.row_count),
+        ('Columns', report.column_count),
+        ('Missing cells', report.missing_cells),
+        ('Duplicate rows', report.duplicate_rows),
+        ('Numeric columns', report.numeric_column_count),
+        ('Categorical columns', report.categorical_column_count)
+      ] %}
+      <div class="col-6 col-md-4">
+        <div class="border rounded p-3 h-100">
+          <div class="text-muted">{{ label }}</div>
+          <div class="fs-4 fw-semibold">{{ value }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h3 class="mt-4">Initial quality indicator: {{ report.quality_indicator }}/100</h3>
+    <p class="text-muted">{{ report.quality_indicator_note }}</p>
+    <div class="progress mb-4" role="progressbar" aria-valuenow="{{ report.quality_indicator }}"
+         aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar" style="width: {{ report.quality_indicator }}%"></div>
+    </div>
+
+    <h3>Warnings and observations</h3>
+    <ul>{% for warning in report.warnings %}<li>{{ warning }}</li>{% endfor %}</ul>
+
+    <h3 class="mt-4">Column-by-column analysis</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-sm">
+        <thead><tr>
+          <th>Column</th><th>Type</th><th>Missing</th><th>Unique</th><th>Outliers</th><th>Statistics / categories</th>
+        </tr></thead>
+        <tbody>
+        {% for column in report.columns %}
+          <tr>
+            <td>{{ column.name }}</td>
+            <td>{{ column.dtype }}</td>
+            <td>{{ column.missing_count }} ({{ column.missing_percent }}%)</td>
+            <td>{{ column.unique_count }}</td>
+            <td>{{ column.get('iqr_outlier_count', '—') }}</td>
+            <td>
+              {% if column.statistics %}
+                {% for key, value in column.statistics.items() %}<div><small>{{ key }}: {{ value if value is not none else 'N/A' }}</small></div>{% endfor %}
+              {% endif %}
+              {% if column.top_categories %}
+                {% for category in column.top_categories[:5] %}
+                  <div><small>{{ category.value }}: {{ category.count }}</small></div>
+                {% endfor %}
+              {% endif %}
+              {% if column.constant %}<strong>Constant column</strong>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="mt-4">Strongest numeric correlations</h3>
+    {% if report.correlations %}
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr><th>Column A</th><th>Column B</th><th>Correlation</th><th>Strength</th></tr></thead>
+        <tbody>{% for item in report.correlations %}
+          <tr><td>{{ item.column_a }}</td><td>{{ item.column_b }}</td>
+          <td>{{ item.correlation }}</td><td>{{ item.strength }}</td></tr>
+        {% endfor %}</tbody>
+      </table>
+    </div>
+    {% else %}
+    <p>At least two numeric columns are needed to calculate correlations.</p>
+    {% endif %}
+
+    <h3 class="mt-4">Possible target columns</h3>
+    <p class="text-muted">These are suggestions only. Confirm the target using the client brief.</p>
+    {% if report.possible_targets %}
+    <div class="table-responsive">
+      <table class="table table-sm table-striped">
+        <thead><tr><th>Column</th><th>Type</th><th>Unique values</th><th>Suggestion</th></tr></thead>
+        <tbody>{% for target in report.possible_targets %}
+          <tr><td>{{ target.column }}</td><td>{{ target.dtype }}</td>
+          <td>{{ target.unique_values }}</td><td>{{ target.suggestion }}</td></tr>
+        {% endfor %}</tbody>
+      </table>
+    </div>
+    {% else %}
+    <p>No likely target columns found automatically.</p>
+    {% endif %}
+    <p class="text-muted mt-3">Outliers use the 1.5×IQR rule. Outliers are not automatically errors. The quality indicator is heuristic and should not be used alone to select a dataset.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

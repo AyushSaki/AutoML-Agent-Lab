@@ -1,0 +1,58 @@
+{
+  "dataset": "50d051181ca14c189be4564e40e2ee4a_HousingData.csv",
+  "target": "MEDV",
+  "task": "regression",
+  "rows": 506,
+  "features": 13,
+  "models": [
+    {
+      "model": "Linear Regression",
+      "mae": 3.1476,
+      "rmse": 4.9983,
+      "r2": 0.6593,
+      "cv_folds": 5,
+      "cv_mae_mean": 3.4803,
+      "cv_mae_std": 0.3447,
+      "cv_r2_mean": 0.7032,
+      "cv_r2_std": 0.0758
+    },
+    {
+      "model": "Random Forest",
+      "mae": 2.0673,
+      "rmse": 2.9824,
+      "r2": 0.8787,
+      "cv_folds": 5,
+      "cv_mae_mean": 2.6037,
+      "cv_mae_std": 0.1368,
+      "cv_r2_mean": 0.7917,
+      "cv_r2_std": 0.0588
+    },
+    {
+      "model": "XGBoost",
+      "mae": 1.9599,
+      "rmse": 2.6979,
+      "r2": 0.9007,
+      "cv_folds": 5,
+      "cv_mae_mean": 2.5316,
+      "cv_mae_std": 0.1637,
+      "cv_r2_mean": 0.8342,
+      "cv_r2_std": 0.0448
+    }
+  ],
+  "best_model": {
+    "model": "XGBoost",
+    "mae": 1.9599,
+    "rmse": 2.6979,
+    "r2": 0.9007,
+    "cv_folds": 5,
+    "cv_mae_mean": 2.5316,
+    "cv_mae_std": 0.1637,
+    "cv_r2_mean": 0.8342,
+    "cv_r2_std": 0.0448
+  },
+  "warnings": [],
+  "evaluation": {
+    "train_rows": 404,
+    "test_rows": 102
+  }
+}
